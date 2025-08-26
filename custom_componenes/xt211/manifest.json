@@ -1,0 +1,10 @@
+{
+  "domain": "xt211",
+  "name": "XT211 Meter",
+  "version": "0.1.0",
+  "documentation": "https://example.com",
+  "requirements": [],
+  "dependencies": ["mqtt"],
+  "codeowners": ["@psopso"],
+  "config_flow": true
+}
