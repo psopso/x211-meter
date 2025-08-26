@@ -122,7 +122,9 @@ class Xt211DatetimeSensor(SensorEntity):
 class Xt211ObisSensor(SensorEntity):
     def __init__(self, device_info, obis):
         self.obis = obis
-        self._attr_name = f"XT211 {obis}"
+        sensor_info = SENSOR_MAP.get(obis, {"name": obis, "unit": None})
+        self._attr_name = f"XT211 {sensor_info['name']}"
+        self._attr_native_unit_of_measurement = sensor_info["unit"]
         self._attr_unique_id = f"xt211_{obis}"
         self._attr_device_info = device_info
         self._state = None
