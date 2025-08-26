@@ -1,3 +1,5 @@
 {
   "name": "XT211 Meter",
+  "render_readme": true,
+  "domains": ["sensor"]
 }
