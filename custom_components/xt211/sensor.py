@@ -4,7 +4,7 @@ from homeassistant.components import mqtt
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.entity import DeviceInfo
 
-from .const import DOMAIN, MQTT_TOPIC_DATA, MQTT_TOPIC_STATUS
+from .const import DOMAIN, MQTT_TOPIC_DATA, MQTT_TOPIC_STATUS, SENSOR_MAP
 
 _LOGGER = logging.getLogger(__name__)
 
