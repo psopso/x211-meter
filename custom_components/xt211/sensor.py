@@ -18,7 +18,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     status_sensor = Xt211StatusSensor(device_info)
     raw_data_sensor = Xt211RawDataSensor(device_info)
-    datetime_sensor = Xt211DatetimeSensor(device_info)   # nový senzor na datetime
+    datetime_sensor = Xt211DatetimeSensor(device_info)
 
     entities = [status_sensor, raw_data_sensor, datetime_sensor]
     async_add_entities(entities)
@@ -30,22 +30,21 @@ async def async_setup_entry(hass, entry, async_add_entities):
             _LOGGER.error("Invalid JSON: %s", e)
             return
 
-        # Uložení do raw sensoru
+        # raw data
         raw_data_sensor.set_raw(payload)
 
-        # Uložení datetime
+        # datetime
         if "datetime" in payload:
             datetime_sensor.set_value(payload["datetime"])
 
         new_entities = []
-        # projdi všechny hodnoty z "values"
         for obis, value in payload.get("values", {}).items():
             sensor = next(
                 (e for e in entities if isinstance(e, Xt211ObisSensor) and e.obis == obis),
                 None,
             )
             if sensor is None:
-                # nový sensor
+                # nový senzor podle OBIS mapy
                 sensor = Xt211ObisSensor(device_info, obis)
                 entities.append(sensor)
                 new_entities.append(sensor)
@@ -60,7 +59,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
         status_sensor.set_value(msg.payload)
         await handle_status(msg.payload)
 
-    # Subscribe MQTT
     await mqtt.async_subscribe(hass, MQTT_TOPIC_DATA, message_received_data)
     await mqtt.async_subscribe(hass, MQTT_TOPIC_STATUS, message_received_status)
 
@@ -122,16 +120,18 @@ class Xt211DatetimeSensor(SensorEntity):
 class Xt211ObisSensor(SensorEntity):
     def __init__(self, device_info, obis):
         self.obis = obis
-        sensor_info = SENSOR_MAP.get(obis, {"name": obis, "unit": None})
-        self._attr_name = f"XT211 {sensor_info['name']}"
-        self._attr_native_unit_of_measurement = sensor_info["unit"]
+        obis_info = SENSOR_MAP.get(obis, {})
+        name = obis_info.get("name", obis)
+        unit = obis_info.get("unit", None)
+
+        self._attr_name = f"XT211 {name}"
         self._attr_unique_id = f"xt211_{obis}"
         self._attr_device_info = device_info
+        self._attr_native_unit_of_measurement = unit
         self._state = None
         self._pending_state = None
 
     async def async_added_to_hass(self):
-        # až teď máme self.hass, můžeme zapsat případnou hodnotu
         if self._pending_state is not None:
             self._state = self._pending_state
             self._pending_state = None
@@ -139,7 +139,6 @@ class Xt211ObisSensor(SensorEntity):
 
     def set_value(self, val):
         if self.hass is None:
-            # ještě není přidán → uložíme jen do bufferu
             self._pending_state = val
         else:
             self._state = val
@@ -153,9 +152,7 @@ class Xt211ObisSensor(SensorEntity):
 # --- PLACEHOLDER HANDLERS ---
 
 async def handle_status(msg: str):
-    # TODO: vlastní logika
     pass
 
 async def handle_data(payload: dict):
-    # TODO: vlastní logika
     pass
