@@ -1,6 +1,6 @@
 DOMAIN = "xt211"
-MQTT_TOPIC_DATA = "elektromer/xt211/data"
-MQTT_TOPIC_STATUS = "elektromer/xt211/status"
+MQTT_TOPIC_DATA = "elektromer/data"
+MQTT_TOPIC_STATUS = "elektromer/status"
 
 # Mapování OBIS kódů na srozumitelné názvy a jednotky
 SENSOR_MAP = {
