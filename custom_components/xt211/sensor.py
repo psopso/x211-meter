@@ -3,72 +3,111 @@ import logging
 from homeassistant.components import mqtt
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, MQTT_TOPIC_DATA, MQTT_TOPIC_STATUS, SENSOR_MAP
+from .const import (
+    DOMAIN,
+    SENSOR_MAP,
+    CONF_TOPIC_DATA,
+    CONF_TOPIC_STATUS,
+    DEFAULT_TOPIC_DATA,
+    DEFAULT_TOPIC_STATUS,
+)
+
+from .mqtt_handler import (
+        handle_status,
+        handle_data
+)
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(hass, entry, async_add_entities):
+
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+):
+    """Set up the XT211 sensor platform."""
+    
+    topic_data = entry.data.get(CONF_TOPIC_DATA, DEFAULT_TOPIC_DATA)
+    topic_status = entry.data.get(CONF_TOPIC_STATUS, DEFAULT_TOPIC_STATUS)
+    entry_id = entry.entry_id # <--- ZÍSKÁNÍ UNIKÁTNÍHO ID ZÁZNAMU
+    
+    _LOGGER.info(f"Setting up XT211 with Data Topic: {topic_data} and Status Topic: {topic_status}")
+
     device_info = DeviceInfo(
-        identifiers={(DOMAIN, "xt211")},
+        identifiers={(DOMAIN, entry_id)}, # Použijeme entry_id pro unikátnost zařízení
         name="XT211 Meter",
         manufacturer="Unknown",
         model="XT211",
     )
-
-    status_sensor = Xt211StatusSensor(device_info)
-    raw_data_sensor = Xt211RawDataSensor(device_info)
-    datetime_sensor = Xt211DatetimeSensor(device_info)
+    
+    # <--- ZMĚNA: Předáváme entry_id do konstruktorů senzorů
+    status_sensor = Xt211StatusSensor(device_info, entry_id)
+    raw_data_sensor = Xt211RawDataSensor(device_info, entry_id)
+    datetime_sensor = Xt211DatetimeSensor(device_info, entry_id)
 
     entities = [status_sensor, raw_data_sensor, datetime_sensor]
     async_add_entities(entities)
 
+    # Uložíme si entity do hass.data, abychom k nim měli přístup později
+    if DOMAIN not in hass.data:
+        hass.data[DOMAIN] = {}
+    hass.data[DOMAIN][entry.entry_id] = entities
+
     async def message_received_data(msg):
+        """Handle new MQTT messages for data."""
         try:
             payload = json.loads(msg.payload)
         except Exception as e:
-            _LOGGER.error("Invalid JSON: %s", e)
+            _LOGGER.error("Invalid JSON received on data topic: %s", e)
             return
 
-        # raw data
         raw_data_sensor.set_raw(payload)
 
-        # datetime
         if "datetime" in payload:
             datetime_sensor.set_value(payload["datetime"])
 
         new_entities = []
+        # Získáme seznam již existujících OBIS senzorů z hass.data
+        current_obis_sensors = {
+            e.obis: e for e in hass.data[DOMAIN].get(entry.entry_id, []) if isinstance(e, Xt211ObisSensor)
+        }
+
         for obis, value in payload.get("values", {}).items():
-            sensor = next(
-                (e for e in entities if isinstance(e, Xt211ObisSensor) and e.obis == obis),
-                None,
-            )
+            sensor = current_obis_sensors.get(obis)
+
             if sensor is None:
-                # nový senzor podle OBIS mapy
-                sensor = Xt211ObisSensor(device_info, obis)
+                _LOGGER.debug(f"Creating new sensor for OBIS code: {obis}")
+                # <--- ZMĚNA: Předáváme entry_id i sem
+                sensor = Xt211ObisSensor(device_info, entry_id, obis)
                 entities.append(sensor)
                 new_entities.append(sensor)
+            
             sensor.set_value(value)
 
         if new_entities:
             async_add_entities(new_entities)
+            # Aktualizujeme seznam entit v hass.data
+            hass.data[DOMAIN][entry.entry_id] = entities
 
         await handle_data(payload)
 
     async def message_received_status(msg):
+        """Handle new MQTT messages for status."""
         status_sensor.set_value(msg.payload)
         await handle_status(msg.payload)
-
-    await mqtt.async_subscribe(hass, MQTT_TOPIC_DATA, message_received_data)
-    await mqtt.async_subscribe(hass, MQTT_TOPIC_STATUS, message_received_status)
+    
+    await mqtt.async_subscribe(hass, topic_data, message_received_data)
+    await mqtt.async_subscribe(hass, topic_status, message_received_status)
 
 
 # --- ENTITY CLASSES ---
 
 class Xt211StatusSensor(SensorEntity):
-    def __init__(self, device_info):
+    def __init__(self, device_info, entry_id): # <--- ZMĚNA: Přidán argument entry_id
         self._attr_name = "XT211 Status"
-        self._attr_unique_id = "xt211_status"
+        self._attr_unique_id = f"{entry_id}_status" # <--- ZMĚNA: Opraveno vytváření unique_id
         self._attr_device_info = device_info
         self._state = None
 
@@ -83,9 +122,9 @@ class Xt211StatusSensor(SensorEntity):
 
 
 class Xt211RawDataSensor(SensorEntity):
-    def __init__(self, device_info):
+    def __init__(self, device_info, entry_id): # <--- ZMĚNA: Přidán argument entry_id
         self._attr_name = "XT211 Raw Data"
-        self._attr_unique_id = "xt211_raw"
+        self._attr_unique_id = f"{entry_id}_raw" # <--- ZMĚNA: Opraveno vytváření unique_id
         self._attr_device_info = device_info
         self._state = "OK"
         self._attr_extra_state_attributes = {}
@@ -101,9 +140,9 @@ class Xt211RawDataSensor(SensorEntity):
 
 
 class Xt211DatetimeSensor(SensorEntity):
-    def __init__(self, device_info):
+    def __init__(self, device_info, entry_id): # <--- ZMĚNA: Přidán argument entry_id
         self._attr_name = "XT211 Last Datetime"
-        self._attr_unique_id = "xt211_datetime"
+        self._attr_unique_id = f"{entry_id}_datetime" # <--- ZMĚNA: Opraveno vytváření unique_id
         self._attr_device_info = device_info
         self._state = None
 
@@ -118,14 +157,14 @@ class Xt211DatetimeSensor(SensorEntity):
 
 
 class Xt211ObisSensor(SensorEntity):
-    def __init__(self, device_info, obis):
+    def __init__(self, device_info, entry_id, obis): # <--- ZMĚNA: Přidán argument entry_id
         self.obis = obis
         obis_info = SENSOR_MAP.get(obis, {})
         name = obis_info.get("name", obis)
         unit = obis_info.get("unit", None)
 
         self._attr_name = f"XT211 {name}"
-        self._attr_unique_id = f"xt211_{obis}"
+        self._attr_unique_id = f"{entry_id}_{obis}" # <--- ZMĚNA: Opraveno vytváření unique_id
         self._attr_device_info = device_info
         self._attr_native_unit_of_measurement = unit
         self._state = None
@@ -151,8 +190,8 @@ class Xt211ObisSensor(SensorEntity):
 
 # --- PLACEHOLDER HANDLERS ---
 
-async def handle_status(msg: str):
-    pass
+#async def handle_status(msg: str):
+#    pass
 
-async def handle_data(payload: dict):
-    pass
+#async def handle_data(payload: dict):
+#    pass

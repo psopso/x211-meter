@@ -1,6 +1,12 @@
 DOMAIN = "xt211"
-MQTT_TOPIC_DATA = "elektromer/data"
-MQTT_TOPIC_STATUS = "elektromer/status"
+
+# --- Konfigurační klíče ---
+CONF_TOPIC_DATA = "mqtt_topic_data"
+CONF_TOPIC_STATUS = "mqtt_topic_status"
+
+# --- Výchozí hodnoty MQTT topiců ---
+DEFAULT_TOPIC_DATA = "elektromer/data"
+DEFAULT_TOPIC_STATUS = "elektromer/status"
 
 # Mapování OBIS kódů na srozumitelné názvy a jednotky
 SENSOR_MAP = {
