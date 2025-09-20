@@ -46,8 +46,9 @@ async def async_setup_entry(
     status_sensor = Xt211StatusSensor(device_info, entry_id)
     raw_data_sensor = Xt211RawDataSensor(device_info, entry_id)
     datetime_sensor = Xt211DatetimeSensor(device_info, entry_id)
+    battery_sensor = Xt211BatterySensor(device_info, entry_id)
 
-    entities = [status_sensor, raw_data_sensor, datetime_sensor]
+    entities = [status_sensor, raw_data_sensor, datetime_sensor, battery_sensor]
     async_add_entities(entities)
 
     # Uložíme si entity do hass.data, abychom k nim měli přístup později
@@ -93,9 +94,22 @@ async def async_setup_entry(
 
         await handle_data(payload)
 
+# Examples
+# {"battery":{"Voltage":4.15749979019165,"SOC":96.234375}}
+
     async def message_received_status(msg):
         """Handle new MQTT messages for status."""
         status_sensor.set_value(msg.payload)
+        
+        if msg.payload != "":
+            json_data = json.loads(msg.payload)
+            if json_data.get("battery") != None:
+                if (json_data["battery"].get("Voltage") != None) and (json_data["battery"].get("SOC") != None):
+                    str = f"{round(json_data["battery"]["Voltage"],2)}V, {round(json_data["battery"]["SOC"],2)}%"
+                    battery_sensor.set_value(str)
+            else:
+                battery_sensor.set_value("Failed")
+        
         await handle_status(msg.payload)
     
     await mqtt.async_subscribe(hass, topic_data, message_received_data)
@@ -143,6 +157,22 @@ class Xt211DatetimeSensor(SensorEntity):
     def __init__(self, device_info, entry_id): # <--- ZMĚNA: Přidán argument entry_id
         self._attr_name = "XT211 Last Datetime"
         self._attr_unique_id = f"{entry_id}_datetime" # <--- ZMĚNA: Opraveno vytváření unique_id
+        self._attr_device_info = device_info
+        self._state = None
+
+    def set_value(self, val):
+        self._state = val
+        if self.hass:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self):
+        return self._state
+
+class Xt211BatterySensor(SensorEntity):
+    def __init__(self, device_info, entry_id):
+        self._attr_name = "XT211 Battery"
+        self._attr_unique_id = f"{entry_id}_battery"
         self._attr_device_info = device_info
         self._state = None
 
