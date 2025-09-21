@@ -57,8 +57,9 @@ async def async_setup_entry(
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN][entry.entry_id] = entities
 
-//Example
-//{"datetime":"Fri 2025-09-19 08:44:03 GMT","first_boot":false,"obis_1_8_0":443.451,"obis_1_8_1":83.769,"obis_1_8_2":359.682,"obis_1_8_3":0,"obis_1_8_4":0}
+# Examples
+# {"datetime":"Fri 2025-09-19 08:44:03 GMT","first_boot":false,"obis_1_8_0":443.451,"obis_1_8_1":83.769,"obis_1_8_2":359.682,"obis_1_8_3":0,"obis_1_8_4":0}
+
 
     async def message_received_data(msg):
         """Handle new MQTT messages for data."""
