@@ -46,13 +46,17 @@ void custom_mqtt_send_data(void) {
     		strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
 
             cJSON *root = cJSON_CreateObject();
+           	cJSON *values = cJSON_CreateObject();
+
             cJSON_AddStringToObject(root, "datetime", buf);
             cJSON_AddBoolToObject(root, "first_boot", entry.first_after_restart);
-            cJSON_AddNumberToObject(root, "obis_1_8_0", entry.data.obis_1_8_0);
-            cJSON_AddNumberToObject(root, "obis_1_8_1", entry.data.obis_1_8_1);
-            cJSON_AddNumberToObject(root, "obis_1_8_2", entry.data.obis_1_8_2);
-            cJSON_AddNumberToObject(root, "obis_1_8_3", entry.data.obis_1_8_3);
-            cJSON_AddNumberToObject(root, "obis_1_8_4", entry.data.obis_1_8_4);
+			cJSON_AddItemToObject(root, "values", values);    
+
+            cJSON_AddNumberToObject(values, "1.8.0", entry.data.obis_1_8_0);
+            cJSON_AddNumberToObject(values, "1.8.1", entry.data.obis_1_8_1);
+            cJSON_AddNumberToObject(values, "1.8.2", entry.data.obis_1_8_2);
+            cJSON_AddNumberToObject(values, "1.8.3", entry.data.obis_1_8_3);
+            cJSON_AddNumberToObject(values, "1.8.4", entry.data.obis_1_8_4);
 
             char *json_string = cJSON_PrintUnformatted(root);
             if (esp_mqtt_client_publish(client, MQTT_DATA_TOPIC, json_string, 0, 1, 0) > 0) successful_sends++; else failed_sends++;

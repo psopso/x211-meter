@@ -151,9 +151,11 @@ void app_main(void) {
 		}
 		
         ESP_LOGI(TAG, "Čas pro odeslání dat na MQTT a synchronizaci času.");
-//        time_sync_from_ntp(); // Opravit čas
         custom_mqtt_send_data();
-        custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter);
+        if (!first_boot)
+    	    custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter);
+ 
+
                 
         float voltage, soc;
         if (battery_get_status(&voltage, &soc) == ESP_OK) {
@@ -161,6 +163,9 @@ void app_main(void) {
 //            custom_mqtt_send_status(voltage, soc);
             custom_mqtt_send_status(CMD_BATTERY, voltage, soc);
         }
+        if (!first_boot) {
+          esp_err_t ntp_esp_status = time_sync_from_ntp(); // Opravit čas
+         }
     }
 
     // Vyčistit stará data z fronty
