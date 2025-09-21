@@ -8,6 +8,12 @@ from .const import (
     CONF_TOPIC_STATUS,
     DEFAULT_TOPIC_DATA,
     DEFAULT_TOPIC_STATUS,
+    CONF_INFLUXDB_HOST,
+    CONF_INFLUXDB_PORT,
+    CONF_INFLUXDB_DATABASE,
+    CONF_INFLUXDB_USERNAME,
+    CONF_INFLUXDB_PASSWORD
+
 )
 
 class Xt211ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -28,6 +34,11 @@ class Xt211ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_TOPIC_DATA, default=DEFAULT_TOPIC_DATA): str,
                 vol.Required(CONF_TOPIC_STATUS, default=DEFAULT_TOPIC_STATUS): str,
+                vol.Required(CONF_INFLUXDB_HOST): str,
+                vol.Required(CONF_INFLUXDB_PORT, default="8086"): str,
+                vol.Required(CONF_INFLUXDB_DATABASE): str,
+                vol.Optional(CONF_INFLUXDB_USERNAME, default=""): str,
+                vol.Required(CONF_INFLUXDB_PASSWORD): str,
             }
         )
         return self.async_show_form(step_id="user", data_schema=data_schema)
@@ -64,6 +75,26 @@ class Xt211OptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Required(
                     CONF_TOPIC_STATUS,
                     default=self.config_entry.data.get(CONF_TOPIC_STATUS),
+                ): str,
+                vol.Required(
+                    CONF_INFLUXDB_HOST,
+                    default=self.config_entry.data.get(CONF_INFLUXDB_HOST, ""),
+                ): str,
+                vol.Required(
+                    CONF_INFLUXDB_PORT,
+                    default=self.config_entry.data.get(CONF_INFLUXDB_PORT, "8086"),
+                ): str,
+                vol.Required(
+                    CONF_INFLUXDB_DATABASE,
+                    default=self.config_entry.data.get(CONF_INFLUXDB_DATABASE, ""),
+                ): str,
+                vol.Optional(
+                    CONF_INFLUXDB_USERNAME,
+                    default=self.config_entry.data.get(CONF_INFLUXDB_USERNAME, ""),
+                ): str,
+                vol.Required(
+                    CONF_INFLUXDB_PASSWORD,
+                    default=self.config_entry.data.get(CONF_INFLUXDB_PASSWORD, ""),
                 ): str,
             }
         )
