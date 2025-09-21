@@ -47,14 +47,18 @@ async def async_setup_entry(
     raw_data_sensor = Xt211RawDataSensor(device_info, entry_id)
     datetime_sensor = Xt211DatetimeSensor(device_info, entry_id)
     battery_sensor = Xt211BatterySensor(device_info, entry_id)
+    wakeups_sensor = Xt211WakeupsSensor(device_info, entry_id)
 
-    entities = [status_sensor, raw_data_sensor, datetime_sensor, battery_sensor]
+    entities = [status_sensor, raw_data_sensor, datetime_sensor, battery_sensor, wakeups_sensor]
     async_add_entities(entities)
 
     # Uložíme si entity do hass.data, abychom k nim měli přístup později
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN][entry.entry_id] = entities
+
+//Example
+//{"datetime":"Fri 2025-09-19 08:44:03 GMT","first_boot":false,"obis_1_8_0":443.451,"obis_1_8_1":83.769,"obis_1_8_2":359.682,"obis_1_8_3":0,"obis_1_8_4":0}
 
     async def message_received_data(msg):
         """Handle new MQTT messages for data."""
@@ -96,6 +100,7 @@ async def async_setup_entry(
 
 # Examples
 # {"battery":{"Voltage":4.15749979019165,"SOC":96.234375}}
+#  {"Status":{"Status":"OK","StatusText":"After wakeup","Resets":1,"Wakeups":1015}}
 
     async def message_received_status(msg):
         """Handle new MQTT messages for status."""
@@ -107,8 +112,11 @@ async def async_setup_entry(
                 if (json_data["battery"].get("Voltage") != None) and (json_data["battery"].get("SOC") != None):
                     str = f"{round(json_data["battery"]["Voltage"],2)}V, {round(json_data["battery"]["SOC"],2)}%"
                     battery_sensor.set_value(str)
-            else:
-                battery_sensor.set_value("Failed")
+                else:
+                    battery_sensor.set_value("Failed")
+            if json_data.get("Status") != None:
+                if json_data["Status"].get("Wakeups") != None:
+                    wakeups_sensor.set_value(json_data["Status"]["Wakeups"])
         
         await handle_status(msg.payload)
     
@@ -173,6 +181,22 @@ class Xt211BatterySensor(SensorEntity):
     def __init__(self, device_info, entry_id):
         self._attr_name = "XT211 Battery"
         self._attr_unique_id = f"{entry_id}_battery"
+        self._attr_device_info = device_info
+        self._state = None
+
+    def set_value(self, val):
+        self._state = val
+        if self.hass:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self):
+        return self._state
+
+class Xt211WakeupsSensor(SensorEntity):
+    def __init__(self, device_info, entry_id):
+        self._attr_name = "XT211 Wakeups"
+        self._attr_unique_id = f"{entry_id}_wakeups"
         self._attr_device_info = device_info
         self._state = None
 
