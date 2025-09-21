@@ -38,7 +38,7 @@ async def async_setup_entry(
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry_id)}, # Použijeme entry_id pro unikátnost zařízení
         name="XT211 Meter",
-        manufacturer="Unknown",
+        manufacturer="PSO",
         model="XT211",
     )
     
@@ -57,8 +57,8 @@ async def async_setup_entry(
         hass.data[DOMAIN] = {}
     hass.data[DOMAIN][entry.entry_id] = entities
 
-# Examples
-# {"datetime":"Fri 2025-09-19 08:44:03 GMT","first_boot":false,"obis_1_8_0":443.451,"obis_1_8_1":83.769,"obis_1_8_2":359.682,"obis_1_8_3":0,"obis_1_8_4":0}
+#Example
+#{"datetime":"Fri 2025-09-19 08:44:03 GMT","first_boot":false,"obis_1_8_0":443.451,"obis_1_8_1":83.769,"obis_1_8_2":359.682,"obis_1_8_3":0,"obis_1_8_4":0}
 
 
     async def message_received_data(msg):
@@ -105,7 +105,6 @@ async def async_setup_entry(
 
     async def message_received_status(msg):
         """Handle new MQTT messages for status."""
-        status_sensor.set_value(msg.payload)
         
         if msg.payload != "":
             json_data = json.loads(msg.payload)
@@ -113,11 +112,15 @@ async def async_setup_entry(
                 if (json_data["battery"].get("Voltage") != None) and (json_data["battery"].get("SOC") != None):
                     str = f"{round(json_data["battery"]["Voltage"],2)}V, {round(json_data["battery"]["SOC"],2)}%"
                     battery_sensor.set_value(str)
+                    battery_sensor._attr_extra_state_attributes = {"last_message": json_data}
                 else:
                     battery_sensor.set_value("Failed")
             if json_data.get("Status") != None:
                 if json_data["Status"].get("Wakeups") != None:
                     wakeups_sensor.set_value(json_data["Status"]["Wakeups"])
+                if json_data["Status"].get("Status") != None:
+                    status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
+                status_sensor._attr_extra_state_attributes = {"last_message": json_data}
         
         await handle_status(msg.payload)
     
@@ -133,6 +136,7 @@ class Xt211StatusSensor(SensorEntity):
         self._attr_unique_id = f"{entry_id}_status" # <--- ZMĚNA: Opraveno vytváření unique_id
         self._attr_device_info = device_info
         self._state = None
+        self._attr_extra_state_attributes = {}
 
     def set_value(self, val):
         self._state = val
@@ -184,6 +188,7 @@ class Xt211BatterySensor(SensorEntity):
         self._attr_unique_id = f"{entry_id}_battery"
         self._attr_device_info = device_info
         self._state = None
+        self._attr_extra_state_attributes = {}
 
     def set_value(self, val):
         self._state = val
