@@ -9,6 +9,7 @@
 #define RS485_RTS_PIN           (-1) // Not used for push mode
 #define I2C_SDA_PIN             21
 #define I2C_SCL_PIN             22
+#define RS485_BAD_FRAMES_MAX	3
 
 // --- Wi-Fi & MQTT Configuration ---
 #define WIFI_SSID               "KaiserData"

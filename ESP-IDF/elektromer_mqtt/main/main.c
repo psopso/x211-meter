@@ -29,6 +29,7 @@ RTC_DATA_ATTR int bootCount = 0;
 RTC_DATA_ATTR int wakeUpCycleCounter = 0;
 RTC_DATA_ATTR int badFrameCounter = 0;
 RTC_DATA_ATTR int mqttWakeUpCycleCounter = 0;
+RTC_DATA_ATTR time_t firstBootTime = 0;
 
 
 bool wifiInitialized = false;
@@ -72,7 +73,8 @@ void app_main(void) {
         	simple_ota_check_and_do_update(OTA_URL);
 	        esp_err_t ntp_esp_status = time_sync_from_ntp();
 	        if (ntp_esp_status == ESP_FAIL) {
-				custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter);
+		        time(&firstBootTime);
+				custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime);
 				uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
 				ESP_LOGI(TAG, "NTP Failed - Vstupuji do deep sleep na %llu sekund.", sleep_duration_us / 1000000);
 				esp_sleep_enable_timer_wakeup(sleep_duration_us);
@@ -82,7 +84,8 @@ void app_main(void) {
 			}
 //	        ESP_ERROR_CHECK(ntp_esp_status);
 //           custom_wifi_disconnect();
-			custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter);
+	        time(&firstBootTime);
+			custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime);
 
         } else {
             ESP_LOGW("MAIN", "Wi-Fi je odpojeno, čekám...");
@@ -101,30 +104,65 @@ void app_main(void) {
     
     time_t frame_reception_time;
     
-    int length = rs485_read_frame(buffer, UART_BUFFER_SIZE, &frame_reception_time);
-    esp_log_buffer_hex(TAG, buffer, length);
+    bool rs485completed = false;
     
-//    frame_reception_time = time(NULL);
-    
-    char s[50];
- 	formatDatetime(frame_reception_time, s);
-    
-    if (length > 0) {
-        ESP_LOGI(TAG, "Prijat platny ramec, delka: %d", length);
-        ESP_LOGI(TAG, "Datum a cas prijeti: %s", s);
-        
-        dlms_data_t parsed_data;
-        if (dlms_parse_frame(buffer, length, &parsed_data) == ESP_OK) {
-            storage_add_to_queue(&parsed_data, frame_reception_time, first_boot);
-        } else {
-            ESP_LOGE(TAG, "Chyba při parsování DLMS rámce.");
-        }
-    } else {
-        ESP_LOGE(TAG, "Nepodařilo se přijmout platný rámec v časovém limitu.");
-        // TODO: Zde implementovat logiku pro opakované pokusy
-        badFrameCounter +=1;
-    }
-
+    while (!rs485completed) {    
+	    int length = rs485_read_frame(buffer, UART_BUFFER_SIZE, &frame_reception_time);
+	    esp_log_buffer_hex(TAG, buffer, length);
+	    
+	//    frame_reception_time = time(NULL);
+	    
+	    char s[50];
+	 	formatDatetime(frame_reception_time, s);
+	    
+//	    if (false) {
+	    if (length > 0) {
+	        ESP_LOGI(TAG, "Prijat platny ramec, delka: %d", length);
+	        ESP_LOGI(TAG, "Datum a cas prijeti: %s", s);
+	        
+	        dlms_data_t parsed_data;
+	        if (dlms_parse_frame(buffer, length, &parsed_data) == ESP_OK) {
+	            storage_add_to_queue(&parsed_data, frame_reception_time, first_boot);
+	            rs485completed = true;
+	        } else {
+	            ESP_LOGE(TAG, "Chyba pri parsovani DLMS ramce.");
+	            badFrameCounter +=1;
+	        }
+	    } else {
+	        ESP_LOGE(TAG, "Nepodarilo se prijmout platny ramec v casovem limitu.");
+	        // TODO: Zde implementovat logiku pro opakované pokusy
+	        badFrameCounter +=1;
+	    }
+	    if (!rs485completed) {
+			if (badFrameCounter > RS485_BAD_FRAMES_MAX){
+				ESP_LOGI(TAG, "wifiInitialized: %b ", wifiInitialized);
+			   if (wifiInitialized) {
+				   ESP_LOGI(TAG, "CustomWifiConnected: %b", custom_wifi_is_connected());
+				    if (!custom_wifi_is_connected()) {
+		    		    ESP_LOGI(TAG, "Zkusím WIFI po novu.");
+		        		vTaskDelay(pdMS_TO_TICKS(5000));
+		        		custom_wifi_init(WIFI_SSID, WIFI_PASSWORD,  WIFI_IP, WIFI_GW, WIFI_NETMASK);
+		        		vTaskDelay(pdMS_TO_TICKS(5000));
+					} 
+				} else {
+		    	    ESP_LOGI(TAG, "Zkusím WIFI po novu.");
+		        	vTaskDelay(pdMS_TO_TICKS(5000));
+		        	custom_wifi_init("KaiserData", "Tamade69",  "192.168.143.153", "192.168.143.250", "255.255.255.0");
+		        	vTaskDelay(pdMS_TO_TICKS(5000));		
+				}
+				//Nepodarilo se 3x prijmout platny ramec
+				ESP_LOGE(TAG, "Nepodarilo se 3x po sobe prijmout platny ramec.");
+				custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime);
+				uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
+				ESP_LOGI(TAG, "RS485 Failed - Vstupuji do deep sleep na %llu sekund.", sleep_duration_us / 1000000);
+				esp_sleep_enable_timer_wakeup(sleep_duration_us);
+				// Vypnutí napájení periferií před spánkem
+    			gpio_set_level(POWER_ENABLE_GPIO, 0); 
+    			esp_deep_sleep_start();				
+			}
+		}
+	}
+	
     // Kontrola, zda je čas odeslat data a synchronizovat čas
     time_t now;
     time(&now);
@@ -153,7 +191,7 @@ void app_main(void) {
         ESP_LOGI(TAG, "Čas pro odeslání dat na MQTT a synchronizaci času.");
         custom_mqtt_send_data();
         if (!first_boot)
-    	    custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter);
+    	    custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter,firstBootTime);
  
 
                 

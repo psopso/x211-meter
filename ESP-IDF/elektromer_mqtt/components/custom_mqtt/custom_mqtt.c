@@ -148,11 +148,19 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
 			char * status1 = va_arg(args, char *);
    	        int resets = va_arg(args, int);
    	        int wakeups = va_arg(args, int);
+   	        time_t firstBootTime = va_arg(args, time_t);
+
+			char buf[80];
+			struct tm  ts;
+		    ts = *localtime(&firstBootTime);
+    		strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+   	        
 			cJSON_AddItemToObject(root, "Status", statustype);    
 		    cJSON_AddStringToObject(statustype, "Status", status);
 		    cJSON_AddStringToObject(statustype, "StatusText", status1);
 		    cJSON_AddNumberToObject(statustype, "Resets", resets);
    			cJSON_AddNumberToObject(statustype, "Wakeups", wakeups);	
+   			cJSON_AddStringToObject(statustype, "FirstBootTime", (const char *)&buf);	
    			json_string = strdup(cJSON_PrintUnformatted(root));		
 			break;
 		}
