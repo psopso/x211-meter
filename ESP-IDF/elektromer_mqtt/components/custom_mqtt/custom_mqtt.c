@@ -13,11 +13,15 @@
 static const char *TAG = "CUSTOM_MQTT";
 //static EventGroupHandle_t s_wifi_event_group;
 
+extern const char *get_build_datetime(void);
+
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 static esp_mqtt_client_handle_t client = NULL;
 static int successful_sends = 0;
 static int failed_sends = 0;
+
+char * getCurrentDatetime();
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
     // Zjednodušený handler pro logování
@@ -47,10 +51,13 @@ void custom_mqtt_send_data(void) {
 
             cJSON *root = cJSON_CreateObject();
            	cJSON *values = cJSON_CreateObject();
+           	cJSON *data = cJSON_CreateObject();
 
-            cJSON_AddStringToObject(root, "datetime", buf);
-            cJSON_AddBoolToObject(root, "first_boot", entry.first_after_restart);
-			cJSON_AddItemToObject(root, "values", values);    
+            cJSON_AddStringToObject(root, "datetime", getCurrentDatetime());
+			cJSON_AddItemToObject(root, "data", data);    
+            cJSON_AddStringToObject(data, "reading_datetime", buf);
+            cJSON_AddBoolToObject(data, "first_boot", entry.first_after_restart);
+			cJSON_AddItemToObject(data, "values", values);    
 
             cJSON_AddNumberToObject(values, "1.8.0", entry.data.obis_1_8_0);
             cJSON_AddNumberToObject(values, "1.8.1", entry.data.obis_1_8_1);
@@ -135,6 +142,7 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
             double soc = va_arg(args, double);
 		    ESP_LOGI(TAG, "Sending status message... (Voltage: %.2fV, SoC: %.1f%%)", voltage, soc);
 		    
+            cJSON_AddStringToObject(root, "datetime", getCurrentDatetime());
 			cJSON_AddItemToObject(root, "battery", statustype);    
 		    cJSON_AddNumberToObject(statustype, "Voltage", voltage);
     		cJSON_AddNumberToObject(statustype, "SOC", soc);
@@ -149,18 +157,22 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
    	        int resets = va_arg(args, int);
    	        int wakeups = va_arg(args, int);
    	        time_t firstBootTime = va_arg(args, time_t);
+   	        int lastWait = va_arg(args, int);
 
 			char buf[80];
 			struct tm  ts;
 		    ts = *localtime(&firstBootTime);
     		strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
    	        
+            cJSON_AddStringToObject(root, "datetime", getCurrentDatetime());
 			cJSON_AddItemToObject(root, "Status", statustype);    
 		    cJSON_AddStringToObject(statustype, "Status", status);
 		    cJSON_AddStringToObject(statustype, "StatusText", status1);
 		    cJSON_AddNumberToObject(statustype, "Resets", resets);
    			cJSON_AddNumberToObject(statustype, "Wakeups", wakeups);	
+   			cJSON_AddNumberToObject(statustype, "LastWait", lastWait);	
    			cJSON_AddStringToObject(statustype, "FirstBootTime", (const char *)&buf);	
+   			cJSON_AddStringToObject(statustype, "BuildDatetime", get_build_datetime());	
    			json_string = strdup(cJSON_PrintUnformatted(root));		
 			break;
 		}
@@ -176,4 +188,13 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
 
     esp_mqtt_client_stop(client);
     esp_mqtt_client_destroy(client);
+}
+
+char strftime_buf[64];
+char * getCurrentDatetime() {
+	time_t now = 0;
+    time(&now);
+    struct tm  ts = *localtime(&now);
+	strftime(strftime_buf, sizeof(strftime_buf), "%c", &ts);
+	return strftime_buf;
 }

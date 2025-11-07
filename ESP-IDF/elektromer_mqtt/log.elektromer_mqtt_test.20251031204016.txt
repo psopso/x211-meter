@@ -1,0 +1,496 @@
+[0;32mI (9556) uart: queue free spaces: 20[0m
+[0;32mI (9556) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (9556) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (17116) wifi:[ADDBA]RX DELBA, reason:39, delete tid:0, initiator:0(recipient)[0m
+[0;32mI (19276) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (19276) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (19276) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (19286) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (19286) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (19296) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (19306) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (19306) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (19316) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (19326) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (19326) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (19336) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (19346) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (19346) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (19356) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (19366) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (19366) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (19376) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (19386) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (19386) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (19396) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (19406) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (19406) MAIN: 00 00 33 [0m
+[0;32mI (19416) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (19416) MAIN: Datum a cas prijeti: Fri Oct 31 19:40:26 2025 Cekani: 1761939626.000000[0m
+[0;32mI (19426) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (19446) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (19446) STORAGE: Data added to queue. : 1[0m
+[0;32mI (19456) MAIN: wifiInitialized: b [0m
+[0;32mI (19456) MAIN: CustomWifiConnected: b[0m
+[0;32mI (19466) MAIN: Čas pro odeslání dat na MQTT a synchronizaci času.[0m
+[0;32mI (21576) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (21576) CUSTOM_MQTT: MQTT disconnected.[0m
+[0;32mI (21586) CUSTOM_BATTERY: Reading battery status...[0m
+[0;32mI (21586) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (22586) MAIN: Battery: 4.188 V, 100.0 %[0m
+[0;32mI (22586) MAIN1: Battery: 4.187500 , 100.031250[0m
+[0;32mI (22586) CUSTOM_BATTERY: Battery status reading is completed.[0m
+[0;32mI (22586) MAIN: Battery status: 4.187500  100.031250[0m
+[0;32mI (24606) CUSTOM_MQTT: Sending status message... (Voltage: 4.19V, SoC: 100.0%)[0m
+[0;32mI (24706) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (24726) CUSTOM_OTA: Content_length: 14[0m
+[0;32mI (24726) CUSTOM_OTA: No new firmware found (status=404)[0m
+[0;32mI (24736) MAIN: Trvani operace: 6 sekund.[0m
+[0;32mI (24736) MAIN: Boot statistika: Resets: 1  Wakeups: 0 Bad frames: 0[0m
+[0;32mI (24736) MAIN: Vstupuji do deep sleep na 879 sekund.[0m
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 1[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (31053) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (31053) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (31053) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (31053) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (31063) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (31073) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (31073) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (31083) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (31093) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (31093) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (31103) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (31113) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (31113) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (31123) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (31133) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (31133) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (31143) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (31153) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (31153) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (31163) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (31173) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (31183) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (31183) MAIN: 00 00 33 [0m
+[0;32mI (31193) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (31193) MAIN: Datum a cas prijeti: Fri Oct 31 19:55:42 2025 Cekani: 30.000000[0m
+[0;32mI (31203) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (31213) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (31223) STORAGE: Data added to queue. : 2[0m
+[0;32mI (31233) MAIN: Trvani operace: 0 sekund.[0m
+[0;32mI (31233) MAIN: Boot statistika: Resets: 1  Wakeups: 1 Bad frames: 0[0m
+[0;32mI (31243) MAIN: Vstupuji do deep sleep na 885 sekund.[0m
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 2[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (28023) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (28023) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (28023) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (28023) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (28033) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (28043) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (28043) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (28053) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (28063) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (28063) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (28073) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (28083) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (28083) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (28093) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (28103) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (28103) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (28113) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (28123) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (28123) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (28133) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (28143) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (28153) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (28153) MAIN: 00 00 33 [0m
+[0;32mI (28163) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (28163) MAIN: Datum a cas prijeti: Fri Oct 31 20:10:55 2025 Cekani: 27.000000[0m
+[0;32mI (28173) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (28183) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (28193) STORAGE: Data added to queue. : 3[0m
+[0;32mI (28203) MAIN: Trvani operace: 1 sekund.[0m
+[0;32mI (28203) MAIN: Boot statistika: Resets: 1  Wakeups: 2 Bad frames: 0[0m
+[0;32mI (28213) MAIN: Vstupuji do deep sleep na 884 sekund.[0m
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 3[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (28503) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (28503) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (28503) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (28503) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (28513) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (28523) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (28523) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (28533) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (28543) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (28543) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (28553) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (28563) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (28563) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (28573) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (28583) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (28583) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (28593) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (28603) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (28603) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (28613) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (28623) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (28633) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (28633) MAIN: 00 00 33 [0m
+[0;32mI (28643) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (28643) MAIN: Datum a cas prijeti: Fri Oct 31 20:26:08 2025 Cekani: 28.000000[0m
+[0;32mI (28653) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (28663) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (28673) STORAGE: Data added to queue. : 4[0m
+[0;32mI (28683) MAIN: Trvani operace: 0 sekund.[0m
+[0;32mI (28683) MAIN: Boot statistika: Resets: 1  Wakeups: 3 Bad frames: 0[0m
+[0;32mI (28693) MAIN: Vstupuji do deep sleep na 885 sekund.[0m
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 4[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (28773) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (28773) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (28773) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (28773) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (28783) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (28793) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (28793) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (28803) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (28813) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (28813) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (28823) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (28833) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (28833) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (28843) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (28853) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (28853) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (28863) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (28873) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (28873) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (28883) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (28893) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (28903) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (28903) MAIN: 00 00 33 [0m
+[0;32mI (28913) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (28913) MAIN: Datum a cas prijeti: Fri Oct 31 20:41:22 2025 Cekani: 28.000000[0m
+[0;32mI (28923) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (28933) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (28943) STORAGE: Data added to queue. : 5[0m
+[0;32mI (28953) MAIN: Trvani operace: 0 sekund.[0m
+[0;32mI (28953) MAIN: Boot statistika: Resets: 1  Wakeups: 4 Bad frames: 0[0m
+[0;32mI (28963) MAIN: Vstupuji do deep sleep na 885 sekund.[0m

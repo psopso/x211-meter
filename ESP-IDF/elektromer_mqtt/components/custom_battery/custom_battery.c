@@ -1,3 +1,5 @@
+#ifndef ENV_TEST
+
 #include "custom_battery.h"
 #include "custom_config.h"
 #include "esp_log.h"
@@ -111,3 +113,4 @@ esp_err_t max17048_get_soc(float *soc)
     }
     return ret;
 }
+#endif

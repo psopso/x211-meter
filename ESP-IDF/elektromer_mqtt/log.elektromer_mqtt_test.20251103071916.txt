@@ -1,0 +1,855 @@
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 96[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (21653) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (21653) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (21653) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (21653) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (21663) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (21673) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (21673) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (21683) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (21693) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (21693) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (21703) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (21713) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (21713) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (21723) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (21733) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (21733) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (21743) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (21753) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (21753) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (21763) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (21773) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (21783) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (21783) MAIN: 00 00 33 [0m
+[0;32mI (21793) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (21793) MAIN: Datum a cas prijeti: Mon Nov  3 06:33:00 2025 Cekani: 21.000000[0m
+[0;32mI (21803) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (21813) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (21823) STORAGE: Data added to queue. : 97[0m
+[0;32mI (21833) STORAGE: Removed 1 old data entries from queue. New count: 96[0m
+[0;32mI (21833) MAIN: Trvani operace: 1 sekund.[0m
+[0;32mI (21843) MAIN: Boot statistika: Resets: 1  Wakeups: 233 Bad frames: 0[0m
+[0;32mI (21853) MAIN: Vstupuji do deep sleep na 884 sekund.[0m
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 96[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (22473) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (22473) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (22473) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (22473) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (22483) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (22493) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (22493) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (22503) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (22513) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (22513) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (22523) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (22533) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (22533) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (22543) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (22553) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (22553) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (22563) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (22573) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (22573) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (22583) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (22593) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (22603) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (22603) MAIN: 00 00 33 [0m
+[0;32mI (22613) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (22613) MAIN: Datum a cas prijeti: Mon Nov  3 06:48:07 2025 Cekani: 22.000000[0m
+[0;32mI (22623) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (22633) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (22643) STORAGE: Data added to queue. : 97[0m
+[0;32mI (22653) STORAGE: Removed 1 old data entries from queue. New count: 96[0m
+[0;32mI (22653) MAIN: Trvani operace: 0 sekund.[0m
+[0;32mI (22663) MAIN: Boot statistika: Resets: 1  Wakeups: 234 Bad frames: 0[0m
+[0;32mI (22673) MAIN: Vstupuji do deep sleep na 885 sekund.[0m
+ets Jul 29 2019 12:21:46
+
+rst:0x5 (DEEPSLEEP_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (45) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (54) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (63) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (100) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (112) esp_image: segment 0: paddr=00020020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=0004c228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (182) esp_image: segment 2: paddr=0004c238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=00050020 vaddr=400d0020 size=b3e64h (736868) map[0m
+[0;32mI (448) esp_image: segment 4: paddr=00103e8c vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=001043e0 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0011ea7c vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (497) esp_image: segment 7: paddr=0011eae8 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (517) boot: Loaded app from partition at offset 0x20000[0m
+[0;32mI (517) boot: Disabling RNG early entropy source...[0m
+[0;32mI (529) cpu_start: Multicore app[0m
+[0;32mI (537) cpu_start: Pro cpu start user code[0m
+[0;32mI (537) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (538) app_init: Application information:[0m
+[0;32mI (540) app_init: Project name:     elektromer_mqtt[0m
+[0;32mI (546) app_init: App version:      1[0m
+[0;32mI (550) app_init: Compile time:     Oct 31 2025 08:14:33[0m
+[0;32mI (556) app_init: ELF file SHA256:  ec123a8f9...[0m
+[0;32mI (562) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (567) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (572) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (577) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (582) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (589) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (595) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (601) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (607) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (614) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (621) spi_flash: detected chip: gd[0m
+[0;32mI (624) spi_flash: flash io: dio[0m
+[0;33mW (628) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (641) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (653) main_task: Started on CPU0[0m
+[0;32mI (663) main_task: Calling app_main()[0m
+[0;32mI (663) MAIN: Firmware build UTC: 2025-10-31 08:14:29
+[0m
+[0;32mI (1183) STORAGE: Storage restored from RTC. Items in queue: 96[0m
+[0;32mI (1183) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1183) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1183) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1193) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1203) CUSTOM_LED: LED ON![0m
+[0;32mI (1203) uart: queue free spaces: 20[0m
+[0;32mI (1213) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (1223) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (20983) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (20983) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (20983) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (20983) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (20993) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (21003) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (21003) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (21013) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (21023) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (21023) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (21033) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (21043) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (21043) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (21053) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (21063) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (21063) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (21073) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (21083) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (21083) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (21093) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (21103) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (21113) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (21113) MAIN: 00 00 33 [0m
+[0;32mI (21123) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (21123) MAIN: Datum a cas prijeti: Mon Nov  3 07:03:13 2025 Cekani: 20.000000[0m
+[0;32mI (21133) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (21143) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (21153) STORAGE: Data added to queue. : 97[0m
+[0;32mI (21163) MAIN: wifiInitialized: b [0m
+[0;32mI (21163) MAIN: Zkusím WIFI po novu.[0m
+[0;32mI (26173) wifi:wifi driver task: 3ffc34bc, prio:23, stack:6656, core=0[0m
+[0;32mI (26183) wifi:wifi firmware version: ccaebfa[0m
+[0;32mI (26183) wifi:wifi certification version: v7.0[0m
+[0;32mI (26183) wifi:config NVS flash: enabled[0m
+[0;32mI (26183) wifi:config nano formating: disabled[0m
+[0;32mI (26183) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (26193) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (26193) wifi:Init management short buffer num: 32[0m
+[0;32mI (26203) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (26203) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (26213) wifi:Init static rx buffer num: 10[0m
+[0;32mI (26213) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (26223) wifi_init: rx ba win: 6[0m
+[0;32mI (26223) wifi_init: accept mbox: 6[0m
+[0;32mI (26223) wifi_init: tcpip mbox: 32[0m
+[0;32mI (26233) wifi_init: udp mbox: 6[0m
+[0;32mI (26233) wifi_init: tcp mbox: 6[0m
+[0;32mI (26243) wifi_init: tcp tx win: 5760[0m
+[0;32mI (26243) wifi_init: tcp rx win: 5760[0m
+[0;32mI (26243) wifi_init: tcp mss: 1440[0m
+[0;32mI (26253) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (26253) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (26263) custom_wifi: Using static IP config: 192.168.143.153, GW: 192.168.143.250, NM: 255.255.255.0[0m
+[0;32mI (26273) phy_init: phy_version 4830,54550f7,Jun 20 2024,14:22:08[0m
+[0;32mI (26293) wifi:mode : sta (08:d1:f9:1c:eb:b4)[0m
+[0;32mI (26293) wifi:enable tsf[0m
+[0;32mI (26293) custom_wifi: Waiting for Wifi ... 1/20[0m
+[0;32mI (26303) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (26303) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (26323) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (26323) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (26363) wifi:connected with KaiserData, aid = 5, channel 1, BW20, bssid = d0:21:f9:21:49:1e[0m
+[0;32mI (26363) wifi:security: WPA2-PSK, phy: bgn, rssi: -60[0m
+[0;32mI (26373) wifi:pm start, type: 1[0m
+
+[0;32mI (26373) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (26383) esp_netif_handlers: sta ip: 192.168.143.153, mask: 255.255.255.0, gw: 192.168.143.250[0m
+[0;32mI (26383) custom_wifi: Got IP: 192.168.143.153[0m
+[0;32mI (26423) wifi:AP's beacon interval = 102400 us, DTIM period = 1[0m
+[0;32mI (32293) MAIN: Čas pro odeslání dat na MQTT a synchronizaci času.[0m
+[0;32mI (32303) wifi:<ba-add>idx:0 (ifx:0, d0:21:f9:21:49:1e), tid:0, ssn:0, winSize:64[0m
+[0;32mI (44233) CUSTOM_MQTT: Data sending finished. Success: 97, Failed: 0[0m
+[0;32mI (44243) CUSTOM_MQTT: MQTT disconnected.[0m
+[0;32mI (46343) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (46343) CUSTOM_BATTERY: Reading battery status...[0m
+[0;32mI (46353) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (47353) MAIN: Battery: 4.175 V, 98.4 %[0m
+[0;32mI (47353) MAIN1: Battery: 4.175000 , 98.449219[0m
+[0;32mI (47353) CUSTOM_BATTERY: Battery status reading is completed.[0m
+[0;32mI (47353) MAIN: Battery status: 4.175000  98.449219[0m
+[0;32mI (49373) CUSTOM_MQTT: Sending status message... (Voltage: 4.18V, SoC: 98.4%)[0m
+[0;32mI (49473) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (49473) CUSTOM_TIME: Initializing SNTP...[0m
+[0;32mI (49483) CUSTOM_TIME: Waiting for time synchronization... (1/15)[0m
+[0;32mI (51483) CUSTOM_TIME: Waiting for time synchronization... (2/15)[0m
+[0;32mI (53483) CUSTOM_TIME: Waiting for time synchronization... (3/15)[0m
+[0;32mI (54513) CUSTOM_TIME: Time synchronized from NTP server.[0m
+[0;32mI (55483) CUSTOM_TIME: Time synchronization finished.[0m
+[0;32mI (55483) CUSTOM_TIME: The current date/time is: Mon Nov  3 07:02:59 2025[0m
+[0;32mI (55503) CUSTOM_OTA: Content_length: 1048960[0m
+[0;32mI (58233) CUSTOM_OTA: Written 4096/1048960 bytes...[0m
+[0;32mI (58273) CUSTOM_OTA: Written 8192/1048960 bytes...[0m
+[0;32mI (58303) CUSTOM_OTA: Written 12288/1048960 bytes...[0m
+[0;32mI (58323) CUSTOM_OTA: Written 16384/1048960 bytes...[0m
+[0;32mI (58353) CUSTOM_OTA: Written 20480/1048960 bytes...[0m
+[0;32mI (58383) CUSTOM_OTA: Written 24576/1048960 bytes...[0m
+[0;32mI (58413) CUSTOM_OTA: Written 28672/1048960 bytes...[0m
+[0;32mI (58453) CUSTOM_OTA: Written 32768/1048960 bytes...[0m
+[0;32mI (58493) CUSTOM_OTA: Written 36864/1048960 bytes...[0m
+[0;32mI (58513) CUSTOM_OTA: Written 40960/1048960 bytes...[0m
+[0;32mI (58543) CUSTOM_OTA: Written 45056/1048960 bytes...[0m
+[0;32mI (58573) CUSTOM_OTA: Written 49152/1048960 bytes...[0m
+[0;32mI (58603) CUSTOM_OTA: Written 53248/1048960 bytes...[0m
+[0;32mI (58633) CUSTOM_OTA: Written 57344/1048960 bytes...[0m
+[0;32mI (58663) CUSTOM_OTA: Written 61440/1048960 bytes...[0m
+[0;32mI (58693) CUSTOM_OTA: Written 65536/1048960 bytes...[0m
+[0;32mI (58713) CUSTOM_OTA: Written 69632/1048960 bytes...[0m
+[0;32mI (58743) CUSTOM_OTA: Written 73728/1048960 bytes...[0m
+[0;32mI (58773) CUSTOM_OTA: Written 77824/1048960 bytes...[0m
+[0;32mI (58803) CUSTOM_OTA: Written 81920/1048960 bytes...[0m
+[0;32mI (58833) CUSTOM_OTA: Written 86016/1048960 bytes...[0m
+[0;32mI (58863) CUSTOM_OTA: Written 90112/1048960 bytes...[0m
+[0;32mI (58893) CUSTOM_OTA: Written 94208/1048960 bytes...[0m
+[0;32mI (58913) CUSTOM_OTA: Written 98304/1048960 bytes...[0m
+[0;32mI (58943) CUSTOM_OTA: Written 102400/1048960 bytes...[0m
+[0;32mI (58973) CUSTOM_OTA: Written 106496/1048960 bytes...[0m
+[0;32mI (59003) CUSTOM_OTA: Written 110592/1048960 bytes...[0m
+[0;32mI (59033) CUSTOM_OTA: Written 114688/1048960 bytes...[0m
+[0;32mI (59063) CUSTOM_OTA: Written 118784/1048960 bytes...[0m
+[0;32mI (59083) CUSTOM_OTA: Written 122880/1048960 bytes...[0m
+[0;32mI (59113) CUSTOM_OTA: Written 126976/1048960 bytes...[0m
+[0;32mI (59143) CUSTOM_OTA: Written 131072/1048960 bytes...[0m
+[0;32mI (59173) CUSTOM_OTA: Written 135168/1048960 bytes...[0m
+[0;32mI (59203) CUSTOM_OTA: Written 139264/1048960 bytes...[0m
+[0;32mI (59233) CUSTOM_OTA: Written 143360/1048960 bytes...[0m
+[0;32mI (59253) CUSTOM_OTA: Written 147456/1048960 bytes...[0m
+[0;32mI (59293) CUSTOM_OTA: Written 151552/1048960 bytes...[0m
+[0;32mI (59323) CUSTOM_OTA: Written 155648/1048960 bytes...[0m
+[0;32mI (59343) CUSTOM_OTA: Written 159744/1048960 bytes...[0m
+[0;32mI (59383) CUSTOM_OTA: Written 163840/1048960 bytes...[0m
+[0;32mI (59403) CUSTOM_OTA: Written 167936/1048960 bytes...[0m
+[0;32mI (59433) CUSTOM_OTA: Written 172032/1048960 bytes...[0m
+[0;32mI (59463) CUSTOM_OTA: Written 176128/1048960 bytes...[0m
+[0;32mI (59493) CUSTOM_OTA: Written 180224/1048960 bytes...[0m
+[0;32mI (59533) CUSTOM_OTA: Written 184320/1048960 bytes...[0m
+[0;32mI (59563) CUSTOM_OTA: Written 188416/1048960 bytes...[0m
+[0;32mI (59593) CUSTOM_OTA: Written 192512/1048960 bytes...[0m
+[0;32mI (59623) CUSTOM_OTA: Written 196608/1048960 bytes...[0m
+[0;32mI (59653) CUSTOM_OTA: Written 200704/1048960 bytes...[0m
+[0;32mI (59683) CUSTOM_OTA: Written 204800/1048960 bytes...[0m
+[0;32mI (59713) CUSTOM_OTA: Written 208896/1048960 bytes...[0m
+[0;32mI (59743) CUSTOM_OTA: Written 212992/1048960 bytes...[0m
+[0;32mI (59773) CUSTOM_OTA: Written 217088/1048960 bytes...[0m
+[0;32mI (59793) CUSTOM_OTA: Written 221184/1048960 bytes...[0m
+[0;32mI (59823) CUSTOM_OTA: Written 225280/1048960 bytes...[0m
+[0;32mI (59853) CUSTOM_OTA: Written 229376/1048960 bytes...[0m
+[0;32mI (59883) CUSTOM_OTA: Written 233472/1048960 bytes...[0m
+[0;32mI (59913) CUSTOM_OTA: Written 237568/1048960 bytes...[0m
+[0;32mI (59943) CUSTOM_OTA: Written 241664/1048960 bytes...[0m
+[0;32mI (59963) CUSTOM_OTA: Written 245760/1048960 bytes...[0m
+[0;32mI (59993) CUSTOM_OTA: Written 249856/1048960 bytes...[0m
+[0;32mI (60023) CUSTOM_OTA: Written 253952/1048960 bytes...[0m
+[0;32mI (60053) CUSTOM_OTA: Written 258048/1048960 bytes...[0m
+[0;32mI (60083) CUSTOM_OTA: Written 262144/1048960 bytes...[0m
+[0;32mI (60113) CUSTOM_OTA: Written 266240/1048960 bytes...[0m
+[0;32mI (60143) CUSTOM_OTA: Written 270336/1048960 bytes...[0m
+[0;32mI (60173) CUSTOM_OTA: Written 274432/1048960 bytes...[0m
+[0;32mI (60203) CUSTOM_OTA: Written 278528/1048960 bytes...[0m
+[0;32mI (60223) CUSTOM_OTA: Written 282624/1048960 bytes...[0m
+[0;32mI (60253) CUSTOM_OTA: Written 286720/1048960 bytes...[0m
+[0;32mI (60283) CUSTOM_OTA: Written 290816/1048960 bytes...[0m
+[0;32mI (60313) CUSTOM_OTA: Written 294912/1048960 bytes...[0m
+[0;32mI (60343) CUSTOM_OTA: Written 299008/1048960 bytes...[0m
+[0;32mI (60373) CUSTOM_OTA: Written 303104/1048960 bytes...[0m
+[0;32mI (60403) CUSTOM_OTA: Written 307200/1048960 bytes...[0m
+[0;32mI (60433) CUSTOM_OTA: Written 311296/1048960 bytes...[0m
+[0;32mI (60463) CUSTOM_OTA: Written 315392/1048960 bytes...[0m
+[0;32mI (60493) CUSTOM_OTA: Written 319488/1048960 bytes...[0m
+[0;32mI (60513) CUSTOM_OTA: Written 323584/1048960 bytes...[0m
+[0;32mI (60543) CUSTOM_OTA: Written 327680/1048960 bytes...[0m
+[0;32mI (60573) CUSTOM_OTA: Written 331776/1048960 bytes...[0m
+[0;32mI (60603) CUSTOM_OTA: Written 335872/1048960 bytes...[0m
+[0;32mI (60633) CUSTOM_OTA: Written 339968/1048960 bytes...[0m
+[0;32mI (60663) CUSTOM_OTA: Written 344064/1048960 bytes...[0m
+[0;32mI (60693) CUSTOM_OTA: Written 348160/1048960 bytes...[0m
+[0;32mI (60723) CUSTOM_OTA: Written 352256/1048960 bytes...[0m
+[0;32mI (60753) CUSTOM_OTA: Written 356352/1048960 bytes...[0m
+[0;32mI (60783) CUSTOM_OTA: Written 360448/1048960 bytes...[0m
+[0;32mI (60813) CUSTOM_OTA: Written 364544/1048960 bytes...[0m
+[0;32mI (60833) CUSTOM_OTA: Written 368640/1048960 bytes...[0m
+[0;32mI (60863) CUSTOM_OTA: Written 372736/1048960 bytes...[0m
+[0;32mI (60893) CUSTOM_OTA: Written 376832/1048960 bytes...[0m
+[0;32mI (60923) CUSTOM_OTA: Written 380928/1048960 bytes...[0m
+[0;32mI (60953) CUSTOM_OTA: Written 385024/1048960 bytes...[0m
+[0;32mI (60983) CUSTOM_OTA: Written 389120/1048960 bytes...[0m
+[0;32mI (61013) CUSTOM_OTA: Written 393216/1048960 bytes...[0m
+[0;32mI (61043) CUSTOM_OTA: Written 397312/1048960 bytes...[0m
+[0;32mI (61073) CUSTOM_OTA: Written 401408/1048960 bytes...[0m
+[0;32mI (61103) CUSTOM_OTA: Written 405504/1048960 bytes...[0m
+[0;32mI (61133) CUSTOM_OTA: Written 409600/1048960 bytes...[0m
+[0;32mI (61163) CUSTOM_OTA: Written 413696/1048960 bytes...[0m
+[0;32mI (61193) CUSTOM_OTA: Written 417792/1048960 bytes...[0m
+[0;32mI (61223) CUSTOM_OTA: Written 421888/1048960 bytes...[0m
+[0;32mI (61253) CUSTOM_OTA: Written 425984/1048960 bytes...[0m
+[0;32mI (61273) CUSTOM_OTA: Written 430080/1048960 bytes...[0m
+[0;32mI (61303) CUSTOM_OTA: Written 434176/1048960 bytes...[0m
+[0;32mI (61333) CUSTOM_OTA: Written 438272/1048960 bytes...[0m
+[0;32mI (61363) CUSTOM_OTA: Written 442368/1048960 bytes...[0m
+[0;32mI (61393) CUSTOM_OTA: Written 446464/1048960 bytes...[0m
+[0;32mI (61423) CUSTOM_OTA: Written 450560/1048960 bytes...[0m
+[0;32mI (61453) CUSTOM_OTA: Written 454656/1048960 bytes...[0m
+[0;32mI (61473) CUSTOM_OTA: Written 458752/1048960 bytes...[0m
+[0;32mI (61503) CUSTOM_OTA: Written 462848/1048960 bytes...[0m
+[0;32mI (61533) CUSTOM_OTA: Written 466944/1048960 bytes...[0m
+[0;32mI (61563) CUSTOM_OTA: Written 471040/1048960 bytes...[0m
+[0;32mI (61593) CUSTOM_OTA: Written 475136/1048960 bytes...[0m
+[0;32mI (61623) CUSTOM_OTA: Written 479232/1048960 bytes...[0m
+[0;32mI (61653) CUSTOM_OTA: Written 483328/1048960 bytes...[0m
+[0;32mI (61673) CUSTOM_OTA: Written 487424/1048960 bytes...[0m
+[0;32mI (61703) CUSTOM_OTA: Written 491520/1048960 bytes...[0m
+[0;32mI (61733) CUSTOM_OTA: Written 495616/1048960 bytes...[0m
+[0;32mI (61763) CUSTOM_OTA: Written 499712/1048960 bytes...[0m
+[0;32mI (61793) CUSTOM_OTA: Written 503808/1048960 bytes...[0m
+[0;32mI (61823) CUSTOM_OTA: Written 507904/1048960 bytes...[0m
+[0;32mI (61853) CUSTOM_OTA: Written 512000/1048960 bytes...[0m
+[0;32mI (61873) CUSTOM_OTA: Written 516096/1048960 bytes...[0m
+[0;32mI (61903) CUSTOM_OTA: Written 520192/1048960 bytes...[0m
+[0;32mI (61933) CUSTOM_OTA: Written 524288/1048960 bytes...[0m
+[0;32mI (61963) CUSTOM_OTA: Written 528384/1048960 bytes...[0m
+[0;32mI (61993) CUSTOM_OTA: Written 532480/1048960 bytes...[0m
+[0;32mI (62023) CUSTOM_OTA: Written 536576/1048960 bytes...[0m
+[0;32mI (62053) CUSTOM_OTA: Written 540672/1048960 bytes...[0m
+[0;32mI (62083) CUSTOM_OTA: Written 544768/1048960 bytes...[0m
+[0;32mI (62113) CUSTOM_OTA: Written 548864/1048960 bytes...[0m
+[0;32mI (62143) CUSTOM_OTA: Written 552960/1048960 bytes...[0m
+[0;32mI (62173) CUSTOM_OTA: Written 557056/1048960 bytes...[0m
+[0;32mI (62203) CUSTOM_OTA: Written 561152/1048960 bytes...[0m
+[0;32mI (62223) CUSTOM_OTA: Written 565248/1048960 bytes...[0m
+[0;32mI (62253) CUSTOM_OTA: Written 569344/1048960 bytes...[0m
+[0;32mI (62283) CUSTOM_OTA: Written 573440/1048960 bytes...[0m
+[0;32mI (62313) CUSTOM_OTA: Written 577536/1048960 bytes...[0m
+[0;32mI (62343) CUSTOM_OTA: Written 581632/1048960 bytes...[0m
+[0;32mI (62373) CUSTOM_OTA: Written 585728/1048960 bytes...[0m
+[0;32mI (62393) CUSTOM_OTA: Written 589824/1048960 bytes...[0m
+[0;32mI (62423) CUSTOM_OTA: Written 593920/1048960 bytes...[0m
+[0;32mI (62453) CUSTOM_OTA: Written 598016/1048960 bytes...[0m
+[0;32mI (62483) CUSTOM_OTA: Written 602112/1048960 bytes...[0m
+[0;32mI (62513) CUSTOM_OTA: Written 606208/1048960 bytes...[0m
+[0;32mI (62533) CUSTOM_OTA: Written 610304/1048960 bytes...[0m
+[0;32mI (62563) CUSTOM_OTA: Written 614400/1048960 bytes...[0m
+[0;32mI (62593) CUSTOM_OTA: Written 618496/1048960 bytes...[0m
+[0;32mI (62623) CUSTOM_OTA: Written 622592/1048960 bytes...[0m
+[0;32mI (62653) CUSTOM_OTA: Written 626688/1048960 bytes...[0m
+[0;32mI (62683) CUSTOM_OTA: Written 630784/1048960 bytes...[0m
+[0;32mI (62713) CUSTOM_OTA: Written 634880/1048960 bytes...[0m
+[0;32mI (62733) CUSTOM_OTA: Written 638976/1048960 bytes...[0m
+[0;32mI (62763) CUSTOM_OTA: Written 643072/1048960 bytes...[0m
+[0;32mI (62793) CUSTOM_OTA: Written 647168/1048960 bytes...[0m
+[0;32mI (62823) CUSTOM_OTA: Written 651264/1048960 bytes...[0m
+[0;32mI (62853) CUSTOM_OTA: Written 655360/1048960 bytes...[0m
+[0;32mI (62883) CUSTOM_OTA: Written 659456/1048960 bytes...[0m
+[0;32mI (62903) CUSTOM_OTA: Written 663552/1048960 bytes...[0m
+[0;32mI (62933) CUSTOM_OTA: Written 667648/1048960 bytes...[0m
+[0;32mI (62963) CUSTOM_OTA: Written 671744/1048960 bytes...[0m
+[0;32mI (62993) CUSTOM_OTA: Written 675840/1048960 bytes...[0m
+[0;32mI (63023) CUSTOM_OTA: Written 679936/1048960 bytes...[0m
+[0;32mI (63043) CUSTOM_OTA: Written 684032/1048960 bytes...[0m
+[0;32mI (63083) CUSTOM_OTA: Written 688128/1048960 bytes...[0m
+[0;32mI (63113) CUSTOM_OTA: Written 692224/1048960 bytes...[0m
+[0;32mI (63133) CUSTOM_OTA: Written 696320/1048960 bytes...[0m
+[0;32mI (63163) CUSTOM_OTA: Written 700416/1048960 bytes...[0m
+[0;32mI (63203) CUSTOM_OTA: Written 704512/1048960 bytes...[0m
+[0;32mI (63233) CUSTOM_OTA: Written 708608/1048960 bytes...[0m
+[0;32mI (63253) CUSTOM_OTA: Written 712704/1048960 bytes...[0m
+[0;32mI (63293) CUSTOM_OTA: Written 716800/1048960 bytes...[0m
+[0;32mI (63313) CUSTOM_OTA: Written 720896/1048960 bytes...[0m
+[0;32mI (63343) CUSTOM_OTA: Written 724992/1048960 bytes...[0m
+[0;32mI (63373) CUSTOM_OTA: Written 729088/1048960 bytes...[0m
+[0;32mI (63403) CUSTOM_OTA: Written 733184/1048960 bytes...[0m
+[0;32mI (63433) CUSTOM_OTA: Written 737280/1048960 bytes...[0m
+[0;32mI (63463) CUSTOM_OTA: Written 741376/1048960 bytes...[0m
+[0;32mI (63493) CUSTOM_OTA: Written 745472/1048960 bytes...[0m
+[0;32mI (63513) CUSTOM_OTA: Written 749568/1048960 bytes...[0m
+[0;32mI (63553) CUSTOM_OTA: Written 753664/1048960 bytes...[0m
+[0;32mI (63573) CUSTOM_OTA: Written 757760/1048960 bytes...[0m
+[0;32mI (63603) CUSTOM_OTA: Written 761856/1048960 bytes...[0m
+[0;32mI (63633) CUSTOM_OTA: Written 765952/1048960 bytes...[0m
+[0;32mI (63663) CUSTOM_OTA: Written 770048/1048960 bytes...[0m
+[0;32mI (63693) CUSTOM_OTA: Written 774144/1048960 bytes...[0m
+[0;32mI (63723) CUSTOM_OTA: Written 778240/1048960 bytes...[0m
+[0;32mI (63753) CUSTOM_OTA: Written 782336/1048960 bytes...[0m
+[0;32mI (63783) CUSTOM_OTA: Written 786432/1048960 bytes...[0m
+[0;32mI (63803) CUSTOM_OTA: Written 790528/1048960 bytes...[0m
+[0;32mI (63833) CUSTOM_OTA: Written 794624/1048960 bytes...[0m
+[0;32mI (63893) CUSTOM_OTA: Written 798720/1048960 bytes...[0m
+[0;32mI (63963) CUSTOM_OTA: Written 802816/1048960 bytes...[0m
+[0;32mI (64013) CUSTOM_OTA: Written 806912/1048960 bytes...[0m
+[0;32mI (64093) CUSTOM_OTA: Written 811008/1048960 bytes...[0m
+[0;32mI (64173) CUSTOM_OTA: Written 815104/1048960 bytes...[0m
+[0;32mI (64223) CUSTOM_OTA: Written 819200/1048960 bytes...[0m
+[0;32mI (64253) CUSTOM_OTA: Written 823296/1048960 bytes...[0m
+[0;32mI (64293) CUSTOM_OTA: Written 827392/1048960 bytes...[0m
+[0;32mI (64313) CUSTOM_OTA: Written 831488/1048960 bytes...[0m
+[0;32mI (64343) CUSTOM_OTA: Written 835584/1048960 bytes...[0m
+[0;32mI (64373) CUSTOM_OTA: Written 839680/1048960 bytes...[0m
+[0;32mI (64393) CUSTOM_OTA: Written 843776/1048960 bytes...[0m
+[0;32mI (64423) CUSTOM_OTA: Written 847872/1048960 bytes...[0m
+[0;32mI (64453) CUSTOM_OTA: Written 851968/1048960 bytes...[0m
+[0;32mI (64473) CUSTOM_OTA: Written 856064/1048960 bytes...[0m
+[0;32mI (64513) CUSTOM_OTA: Written 860160/1048960 bytes...[0m
+[0;32mI (64533) CUSTOM_OTA: Written 864256/1048960 bytes...[0m
+[0;32mI (64563) CUSTOM_OTA: Written 868352/1048960 bytes...[0m
+[0;32mI (64593) CUSTOM_OTA: Written 872448/1048960 bytes...[0m
+[0;32mI (64623) CUSTOM_OTA: Written 876544/1048960 bytes...[0m
+[0;32mI (64653) CUSTOM_OTA: Written 880640/1048960 bytes...[0m
+[0;32mI (64683) CUSTOM_OTA: Written 884736/1048960 bytes...[0m
+[0;32mI (64713) CUSTOM_OTA: Written 888832/1048960 bytes...[0m
+[0;32mI (64743) CUSTOM_OTA: Written 892928/1048960 bytes...[0m
+[0;32mI (64763) CUSTOM_OTA: Written 897024/1048960 bytes...[0m
+[0;32mI (64793) CUSTOM_OTA: Written 901120/1048960 bytes...[0m
+[0;32mI (64823) CUSTOM_OTA: Written 905216/1048960 bytes...[0m
+[0;32mI (64853) CUSTOM_OTA: Written 909312/1048960 bytes...[0m
+[0;32mI (64883) CUSTOM_OTA: Written 913408/1048960 bytes...[0m
+[0;32mI (64913) CUSTOM_OTA: Written 917504/1048960 bytes...[0m
+[0;32mI (64943) CUSTOM_OTA: Written 921600/1048960 bytes...[0m
+[0;32mI (64973) CUSTOM_OTA: Written 925696/1048960 bytes...[0m
+[0;32mI (64993) CUSTOM_OTA: Written 929792/1048960 bytes...[0m
+[0;32mI (65023) CUSTOM_OTA: Written 933888/1048960 bytes...[0m
+[0;32mI (65053) CUSTOM_OTA: Written 937984/1048960 bytes...[0m
+[0;32mI (65083) CUSTOM_OTA: Written 942080/1048960 bytes...[0m
+[0;32mI (65113) CUSTOM_OTA: Written 946176/1048960 bytes...[0m
+[0;32mI (65143) CUSTOM_OTA: Written 950272/1048960 bytes...[0m
+[0;32mI (65173) CUSTOM_OTA: Written 954368/1048960 bytes...[0m
+[0;32mI (65203) CUSTOM_OTA: Written 958464/1048960 bytes...[0m
+[0;32mI (65233) CUSTOM_OTA: Written 962560/1048960 bytes...[0m
+[0;32mI (65253) CUSTOM_OTA: Written 966656/1048960 bytes...[0m
+[0;32mI (65283) CUSTOM_OTA: Written 970752/1048960 bytes...[0m
+[0;32mI (65313) CUSTOM_OTA: Written 974848/1048960 bytes...[0m
+[0;32mI (65343) CUSTOM_OTA: Written 978944/1048960 bytes...[0m
+[0;32mI (65373) CUSTOM_OTA: Written 983040/1048960 bytes...[0m
+[0;32mI (65403) CUSTOM_OTA: Written 987136/1048960 bytes...[0m
+[0;32mI (65433) CUSTOM_OTA: Written 991232/1048960 bytes...[0m
+[0;32mI (65463) CUSTOM_OTA: Written 995328/1048960 bytes...[0m
+[0;32mI (65483) CUSTOM_OTA: Written 999424/1048960 bytes...[0m
+[0;32mI (65513) CUSTOM_OTA: Written 1003520/1048960 bytes...[0m
+[0;32mI (65543) CUSTOM_OTA: Written 1007616/1048960 bytes...[0m
+[0;32mI (65573) CUSTOM_OTA: Written 1011712/1048960 bytes...[0m
+[0;32mI (65603) CUSTOM_OTA: Written 1015808/1048960 bytes...[0m
+[0;32mI (65633) CUSTOM_OTA: Written 1019904/1048960 bytes...[0m
+[0;32mI (65663) CUSTOM_OTA: Written 1024000/1048960 bytes...[0m
+[0;32mI (65693) CUSTOM_OTA: Written 1028096/1048960 bytes...[0m
+[0;32mI (65723) CUSTOM_OTA: Written 1032192/1048960 bytes...[0m
+[0;32mI (65753) CUSTOM_OTA: Written 1036288/1048960 bytes...[0m
+[0;32mI (65783) CUSTOM_OTA: Written 1040384/1048960 bytes...[0m
+[0;32mI (65803) CUSTOM_OTA: Written 1044480/1048960 bytes...[0m
+[0;32mI (65833) CUSTOM_OTA: Written 1048576/1048960 bytes...[0m
+[0;32mI (65833) CUSTOM_OTA: Written 1048960/1048960 bytes...[0m
+[0;32mI (65833) esp_image: segment 0: paddr=001a0020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (65903) esp_image: segment 1: paddr=001cc228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (65903) esp_image: segment 2: paddr=001cc238 vaddr=3ffb0000 size=03de0h ( 15840) [0m
+[0;32mI (65923) esp_image: segment 3: paddr=001d0020 vaddr=400d0020 size=b3ec4h (736964) map[0m
+[0;32mI (66173) esp_image: segment 4: paddr=00283eec vaddr=3ffb3de0 size=0054ch (  1356) [0m
+[0;32mI (66173) esp_image: segment 5: paddr=00284440 vaddr=40080000 size=1a694h (108180) [0m
+[0;32mI (66213) esp_image: segment 6: paddr=0029eadc vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (66223) esp_image: segment 7: paddr=0029eb48 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (66233) esp_image: segment 0: paddr=001a0020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (66293) esp_image: segment 1: paddr=001cc228 vaddr=3ff80063 size=00008h (     8) [0m
+[0;32mI (66293) esp_image: segment 2: paddr=001cc238 vaddr=3ffb0000 size=03de0h ( 15840) [0m
+[0;32mI (66303) esp_image: segment 3: paddr=001d0020 vaddr=400d0020 size=b3ec4h (736964) map[0m
+[0;32mI (66563) esp_image: segment 4: paddr=00283eec vaddr=3ffb3de0 size=0054ch (  1356) [0m
+[0;32mI (66563) esp_image: segment 5: paddr=00284440 vaddr=40080000 size=1a694h (108180) [0m
+[0;32mI (66603) esp_image: segment 6: paddr=0029eadc vaddr=400c0000 size=00064h (   100) [0m
+[0;32mI (66613) esp_image: segment 7: paddr=0029eb48 vaddr=50000000 size=01608h (  5640) [0m
+[0;32mI (66663) CUSTOM_OTA: OTA update successful (1048960 bytes), rebooting...[0m
+[0;32mI (68773) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (68773) MAIN: Waiting 5s then restart[0m
+[0;32mI (73783) wifi:state: run -> init (0x0)[0m
+[0;32mI (73793) wifi:pm stop, total sleep time: 25093303 us / 47421458 us[0m
+
+[0;32mI (73793) wifi:<ba-del>idx:0, tid:0[0m
+[0;32mI (73793) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0[0m
+[1;31mE (73793) wifi:NAN WiFi stop[0m
+[0;33mW (73803) custom_wifi: Disconnected, scheduling reconnect...[0m
+[0;32mI (73803) custom_wifi: Reconnecting Wi-Fi...[0m
+[0;32mI (73833) wifi:flush txq[0m
+[0;32mI (73833) wifi:stop sw txq[0m
+[0;32mI (73833) wifi:lmac stop hw txq[0m
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:7176
+load:0x40078000,len:15564
+ho 0 tail 12 room 4
+load:0x40080400,len:4
+load:0x40080404,len:3904
+entry 0x40080640
+[0;32mI (31) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (31) boot: compile time Oct 31 2025 08:14:50[0m
+[0;32mI (31) boot: Multicore bootloader[0m
+[0;32mI (36) boot: chip revision: v3.1[0m
+[0;32mI (40) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (44) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (49) boot.esp32: SPI Flash Size : 4MB[0m
+[0;32mI (53) boot: Enabling RNG early entropy source...[0m
+[0;32mI (59) boot: Partition Table:[0m
+[0;32mI (62) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (70) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (77) boot:  1 otadata          OTA data         01 00 0000f000 00002000[0m
+[0;32mI (85) boot:  2 phy_init         RF data          01 01 00011000 00001000[0m
+[0;32mI (92) boot:  3 ota_0            OTA app          00 10 00020000 00180000[0m
+[0;32mI (99) boot:  4 ota_1            OTA app          00 11 001a0000 00180000[0m
+[0;32mI (107) boot: End of partition table[0m
+[0;32mI (111) esp_image: segment 0: paddr=001a0020 vaddr=3f400020 size=2c200h (180736) map[0m
+[0;32mI (182) esp_image: segment 1: paddr=001cc228 vaddr=3ff80063 size=00008h (     8) load[0m
+[0;32mI (182) esp_image: segment 2: paddr=001cc238 vaddr=3ffb0000 size=03de0h ( 15840) load[0m
+[0;32mI (193) esp_image: segment 3: paddr=001d0020 vaddr=400d0020 size=b3ec4h (736964) map[0m
+[0;32mI (449) esp_image: segment 4: paddr=00283eec vaddr=3ffb3de0 size=0054ch (  1356) load[0m
+[0;32mI (449) esp_image: segment 5: paddr=00284440 vaddr=40080000 size=1a694h (108180) load[0m
+[0;32mI (496) esp_image: segment 6: paddr=0029eadc vaddr=400c0000 size=00064h (   100) load[0m
+[0;32mI (497) esp_image: segment 7: paddr=0029eb48 vaddr=50000000 size=01608h (  5640) load[0m
+[0;32mI (520) boot: Loaded app from partition at offset 0x1a0000[0m
+[0;32mI (520) boot: Disabling RNG early entropy source...[0m
+[0;32mI (532) cpu_start: Multicore app[0m
+[0;32mI (540) cpu_start: Pro cpu start user code[0m
+[0;32mI (540) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (540) app_init: Application information:[0m
+[0;32mI (543) app_init: Project name:     elektromer_mqtt_work[0m
+[0;32mI (549) app_init: App version:      1[0m
+[0;32mI (554) app_init: Compile time:     Nov  3 2025 07:39:25[0m
+[0;32mI (560) app_init: ELF file SHA256:  40d27cb27...[0m
+[0;32mI (565) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (570) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (575) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (580) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (585) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (592) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (598) heap_init: At 3FFB9F88 len 00026078 (152 KiB): DRAM[0m
+[0;32mI (604) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (611) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (617) heap_init: At 4009A694 len 0000596C (22 KiB): IRAM[0m
+[0;32mI (625) spi_flash: detected chip: gd[0m
+[0;32mI (627) spi_flash: flash io: dio[0m
+[0;33mW (631) spi_flash: Detected size(16384k) larger than the size in the binary image header(4096k). Using the size in the binary image header.[0m
+[0;33mW (645) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[0;32mI (656) main_task: Started on CPU0[0m
+[0;32mI (666) main_task: Calling app_main()[0m
+[0;32mI (666) MAIN: Firmware build UTC: 2025-11-03 07:39:20
+[0m
+[0;32mI (1186) STORAGE: Storage queue initialized (cleared).[0m
+[0;32mI (1186) CUSTOM_BATTERY: Initializing battery monitor...[0m
+[0;32mI (1186) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (1186) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (1196) CUSTOM_LED: Created LED strip object with RMT backend[0m
+[0;32mI (1206) CUSTOM_LED: LED ON![0m
+[0;32mI (1206) MAIN: První spuštění po restartu.[0m
+[0;32mI (1226) wifi:wifi driver task: 3ffc241c, prio:23, stack:6656, core=0[0m
+[0;32mI (1236) wifi:wifi firmware version: ccaebfa[0m
+[0;32mI (1236) wifi:wifi certification version: v7.0[0m
+[0;32mI (1236) wifi:config NVS flash: enabled[0m
+[0;32mI (1236) wifi:config nano formating: disabled[0m
+[0;32mI (1236) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (1246) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (1246) wifi:Init management short buffer num: 32[0m
+[0;32mI (1256) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (1256) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (1266) wifi:Init static rx buffer num: 10[0m
+[0;32mI (1266) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (1276) wifi_init: rx ba win: 6[0m
+[0;32mI (1276) wifi_init: accept mbox: 6[0m
+[0;32mI (1276) wifi_init: tcpip mbox: 32[0m
+[0;32mI (1286) wifi_init: udp mbox: 6[0m
+[0;32mI (1286) wifi_init: tcp mbox: 6[0m
+[0;32mI (1286) wifi_init: tcp tx win: 5760[0m
+[0;32mI (1296) wifi_init: tcp rx win: 5760[0m
+[0;32mI (1296) wifi_init: tcp mss: 1440[0m
+[0;32mI (1306) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (1306) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (1316) custom_wifi: Using static IP config: 192.168.143.153, GW: 192.168.143.250, NM: 255.255.255.0[0m
+[0;32mI (1326) phy_init: phy_version 4830,54550f7,Jun 20 2024,14:22:08[0m
+[0;32mI (1406) wifi:mode : sta (08:d1:f9:1c:eb:b4)[0m
+[0;32mI (1406) wifi:enable tsf[0m
+[0;32mI (1406) custom_wifi: Waiting for Wifi ... 1/20[0m
+[0;32mI (1416) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (1416) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (1436) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (1446) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (1486) wifi:connected with KaiserData, aid = 5, channel 1, BW20, bssid = d0:21:f9:21:49:1e[0m
+[0;32mI (1486) wifi:security: WPA2-PSK, phy: bgn, rssi: -60[0m
+[0;32mI (1486) wifi:pm start, type: 1[0m
+
+[0;32mI (1486) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (1496) wifi:AP's beacon interval = 102400 us, DTIM period = 1[0m
+[0;32mI (1506) esp_netif_handlers: sta ip: 192.168.143.153, mask: 255.255.255.0, gw: 192.168.143.250[0m
+[0;32mI (1516) custom_wifi: Got IP: 192.168.143.153[0m
+[0;32mI (2406) MAIN: Wi-Fi je připojeno, můžu posílat data.[0m
+[0;32mI (2526) wifi:<ba-add>idx:0 (ifx:0, d0:21:f9:21:49:1e), tid:0, ssn:1, winSize:64[0m
+[0;32mI (2536) CUSTOM_OTA: Content_length: 14[0m
+[0;32mI (2536) CUSTOM_OTA: No new firmware found (status=404)[0m
+[0;32mI (2546) CUSTOM_TIME: Initializing SNTP...[0m
+[0;32mI (2546) CUSTOM_TIME: Waiting for time synchronization... (1/15)[0m
+[0;32mI (4546) CUSTOM_TIME: Waiting for time synchronization... (2/15)[0m
+[0;32mI (5106) CUSTOM_TIME: Time synchronized from NTP server.[0m
+[0;32mI (6546) CUSTOM_TIME: Time synchronization finished.[0m
+[0;32mI (6546) CUSTOM_TIME: The current date/time is: Mon Nov  3 07:03:24 2025[0m
+[0;32mI (8656) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (11666) uart: queue free spaces: 20[0m
+[0;32mI (11666) CUSTOM_RS485: RS485 UART initialized on port 2 with event queue and RX timeout.[0m
+[0;32mI (11666) CUSTOM_RS485: Cekam na paket.[0m
+[0;32mI (20936) wifi:[ADDBA]RX DELBA, reason:39, delete tid:0, initiator:0(recipient)[0m
+[0;32mI (66806) MAIN: 0f 80 00 05 5f 00 02 02 16 01 01 16 02 02 00 01 [0m
+[0;32mI (66806) MAIN: 00 00 60 01 01 ff 02 09 0a 35 31 30 30 30 32 35 [0m
+[0;32mI (66806) MAIN: 30 38 35 02 02 00 46 00 00 60 03 0a ff 03 16 01 [0m
+[0;32mI (66816) MAIN: 02 02 00 47 00 00 11 00 00 ff 03 06 00 00 00 00 [0m
+[0;32mI (66816) MAIN: 02 02 00 46 00 01 60 03 0a ff 03 16 01 02 02 00 [0m
+[0;32mI (66826) MAIN: 46 00 02 60 03 0a ff 03 16 01 02 02 00 46 00 03 [0m
+[0;32mI (66836) MAIN: 60 03 0a ff 03 16 01 02 02 00 46 00 04 60 03 0a [0m
+[0;32mI (66836) MAIN: ff 03 16 00 02 02 00 01 00 00 60 0e 00 ff 02 09 [0m
+[0;32mI (66846) MAIN: 02 54 32 02 02 00 03 01 00 01 07 00 ff 02 06 00 [0m
+[0;32mI (66856) MAIN: 00 03 3d 02 02 00 03 01 00 15 07 00 ff 02 06 00 [0m
+[0;32mI (66856) MAIN: 00 00 8a 02 02 00 03 01 00 29 07 00 ff 02 06 00 [0m
+[0;32mI (66866) MAIN: 00 00 6c 02 02 00 03 01 00 3d 07 00 ff 02 06 00 [0m
+[0;32mI (66876) MAIN: 00 02 46 02 02 00 03 01 00 02 07 00 ff 02 06 00 [0m
+[0;32mI (66876) MAIN: 00 00 00 02 02 00 03 01 00 16 07 00 ff 02 06 00 [0m
+[0;32mI (66886) MAIN: 00 00 00 02 02 00 03 01 00 2a 07 00 ff 02 06 00 [0m
+[0;32mI (66896) MAIN: 00 00 00 02 02 00 03 01 00 3e 07 00 ff 02 06 00 [0m
+[0;32mI (66896) MAIN: 00 00 00 02 02 00 03 01 00 01 08 00 ff 02 06 00 [0m
+[0;32mI (66906) MAIN: 06 c4 3b 02 02 00 03 01 00 01 08 01 ff 02 06 00 [0m
+[0;32mI (66916) MAIN: 01 47 39 02 02 00 03 01 00 01 08 02 ff 02 06 00 [0m
+[0;32mI (66916) MAIN: 05 7d 02 02 02 00 03 01 00 01 08 03 ff 02 06 00 [0m
+[0;32mI (66926) MAIN: 00 00 00 02 02 00 03 01 00 01 08 04 ff 02 06 00 [0m
+[0;32mI (66936) MAIN: 00 00 00 02 02 00 03 01 00 02 08 00 ff 02 06 00 [0m
+[0;32mI (66936) MAIN: 00 00 33 [0m
+[0;32mI (66946) MAIN: Prijat platny ramec, delka: 355[0m
+[0;32mI (66946) MAIN: Datum a cas prijeti: Mon Nov  3 07:04:23 2025 Cekani: 65.000000[0m
+[0;32mI (66956) DLMS_PARSER: Parsing DLMS frame (length: 355)...[0m
+OBIS: 1.7.0 => 829
+OBIS: 1.8.0 => 443451
+OBIS: 1.8.1 => 83769
+OBIS: 1.8.2 => 359682
+OBIS: 1.8.3 => 0
+OBIS: 1.8.4 => 0
+[0;32mI (66976) DLMS_PARSER: Parsing complete (using dummy data).[0m
+[0;32mI (66976) STORAGE: Data added to queue. : 1[0m
+[0;32mI (66986) MAIN: wifiInitialized: b [0m
+[0;32mI (66986) MAIN: CustomWifiConnected: b[0m
+[0;32mI (66996) MAIN: Čas pro odeslání dat na MQTT a synchronizaci času.[0m
+[0;32mI (69106) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (69106) CUSTOM_MQTT: MQTT disconnected.[0m
+[0;32mI (69116) CUSTOM_BATTERY: Reading battery status...[0m
+[0;32mI (69116) CUSTOM_BATTERY: MAX17048 initialized (QuickStart)[0m
+[0;32mI (70116) MAIN: Battery: 4.175 V, 98.4 %[0m
+[0;32mI (70116) MAIN1: Battery: 4.175000 , 98.449219[0m
+[0;32mI (70116) CUSTOM_BATTERY: Battery status reading is completed.[0m
+[0;32mI (70116) MAIN: Battery status: 4.175000  98.449219[0m
+[0;32mI (72146) CUSTOM_MQTT: Sending status message... (Voltage: 4.18V, SoC: 98.4%)[0m
+[0;32mI (72246) CUSTOM_MQTT: Data sending finished. Success: 1, Failed: 0[0m
+[0;32mI (72266) CUSTOM_OTA: Content_length: 14[0m
+[0;32mI (72266) CUSTOM_OTA: No new firmware found (status=404)[0m
+[0;32mI (72276) MAIN: Trvani operace: 6 sekund.[0m
+[0;32mI (72276) MAIN: Boot statistika: Resets: 1  Wakeups: 0 Bad frames: 0[0m
+[0;32mI (72286) MAIN: Vstupuji do deep sleep na 879 sekund.[0m

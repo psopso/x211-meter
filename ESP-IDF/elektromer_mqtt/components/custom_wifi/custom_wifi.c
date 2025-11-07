@@ -50,7 +50,7 @@ esp_err_t custom_wifi_init(const char *ssid, const char *password,
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
 	// Pokud jsou zadány IP parametry, použijeme statickou IP
-    if (ip && gateway && netmask) {
+    if (ip && *ip && gateway && *gateway && netmask && *netmask) {
         ESP_LOGI(TAG, "Using static IP config: %s, GW: %s, NM: %s", ip, gateway, netmask);
         esp_err_t err = esp_netif_dhcpc_stop(wifi_netif);
         if (err != ESP_OK && err != ESP_ERR_ESP_NETIF_DHCP_ALREADY_STOPPED) {

@@ -1,0 +1,17 @@
+# This file was generated using idf.py save-defconfig. It can be edited manually.
+# Espressif IoT Development Framework (ESP-IDF) 5.3.1 Project Minimal Configuration
+#
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_ESP_WIFI_SSID="KaiserData"
+CONFIG_ESP_WIFI_PASSWORD="Tamade69"
+CONFIG_ESP_WIFI_IP="192.168.143.153"
+CONFIG_ESP_WIFI_GW="192.168.143.250"
+CONFIG_ESP_WIFI_NETMASK="255.255.255.0"
+CONFIG_MQTT_BROKER_URI="mqtt://192.168.143.151"
+CONFIG_MQTT_USERNAME="admin"
+CONFIG_MQTT_PASSWORD="Bubak,3390"
+CONFIG_MQTT_TOPIC_BASE="elektromertest"
+CONFIG_OTA_URL="http://192.168.143.151:8123/api/download/elektromer_mqtt_test.bin"
+CONFIG_ESP_PHY_MAX_WIFI_TX_POWER=12
+CONFIG_IDF_TARGET="esp32s3"

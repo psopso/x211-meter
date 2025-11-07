@@ -64,10 +64,9 @@ esp_err_t simple_ota_check_and_do_update(const char *url)
 
     ESP_LOGI(TAG, "OTA update successful (%d bytes), rebooting...", total);
     esp_http_client_cleanup(client);
-
-    ESP_LOGI(TAG, "Waiting 5s then restart");
-    vTaskDelay(pdMS_TO_TICKS(5000));
-    esp_restart();
+//    ESP_LOGI(TAG, "Waiting 5s then restart");
+//    vTaskDelay(pdMS_TO_TICKS(5000));
+//    esp_restart();
 
     return ESP_OK; // nedostane se sem, protože se restartuje
 }

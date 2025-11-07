@@ -1,14 +1,69 @@
 # put here your custom config value
-menu "Example Configuration"
+menu "WIFI Configuration"
 config ESP_WIFI_SSID
     string "WiFi SSID"
     default "myssid"
     help
-	SSID (network name) for the example to connect to.
+	SSID (network name)
 
 config ESP_WIFI_PASSWORD
     string "WiFi Password"
-    default "mypassword"
+    default ""
     help
-	WiFi password (WPA or WPA2) for the example to use.
+	WiFi password (WPA or WPA2)
+
+config ESP_WIFI_IP
+    string "WiFi IP"
+    default "IP"
+    help
+	IP (IP address)
+
+config ESP_WIFI_GW
+    string "WiFi GW"
+    default "GW"
+    help
+	GW (GW address)
+
+config ESP_WIFI_NETMASK
+    string "WiFi NETMASK"
+    default "NETMASK"
+    help
+	NETMASK (NETMASK)
+
+endmenu
+
+menu "MQTT Configuration"
+config MQTT_BROKER_URI
+    string "Mqtt address"
+    default ""
+    help
+	mqttaddress (mqtt address)
+
+config MQTT_USERNAME
+    string "Mqtt username"
+    default ""
+    help
+	mqttusername (mqtt username)
+
+config MQTT_PASSWORD
+    string "Mqtt password"
+    default ""
+    help
+	mqttpassword (mqtt password)
+
+config MQTT_TOPIC_BASE
+    string "Mqtt topic base"
+    default "elektromer"
+    help
+	mqttpassword (mqtt topic base)
+
+endmenu
+
+menu "OTA Configuration"
+config OTA_URL
+    string "OTA URL"
+    default ""
+    help
+	otaurl (ota url)
+
 endmenu
