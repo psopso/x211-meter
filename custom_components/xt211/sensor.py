@@ -80,7 +80,7 @@ async def async_setup_entry(
             e.obis: e for e in hass.data[DOMAIN].get(entry.entry_id, []) if isinstance(e, Xt211ObisSensor)
         }
 
-        for obis, value in payload.get("values", {}).items():
+        for obis, value in payload["data"].get("values", {}).items():
             sensor = current_obis_sensors.get(obis)
 
             if sensor is None:
