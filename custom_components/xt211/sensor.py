@@ -120,7 +120,7 @@ async def async_setup_entry(
                 if json_data["Status"].get("Wakeups") != None:
                     wakeups_sensor.set_value(json_data["Status"]["Wakeups"])
                 if json_data["Status"].get("RSSI") != None:
-                    rssi_sensor_sensor.set_value(json_data["Status"]["RSSI"])
+                    rssi_sensor_sensor.set_value(json_data["Status"]["Wifi"])
                 if json_data["Status"].get("Status") != None:
                     status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
@@ -220,7 +220,7 @@ class Xt211WakeupsSensor(SensorEntity):
 
 class Xt211RSSISensor(SensorEntity):
     def __init__(self, device_info, entry_id):
-        self._attr_name = "XT211 RSSI"
+        self._attr_name = "XT211 Wifi"
         self._attr_unique_id = f"{entry_id}_rssi"
         self._attr_device_info = device_info
         self._state = None
