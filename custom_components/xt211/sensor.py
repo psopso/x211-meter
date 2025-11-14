@@ -120,7 +120,7 @@ async def async_setup_entry(
                 if json_data["Status"].get("Wakeups") != None:
                     wakeups_sensor.set_value(json_data["Status"]["Wakeups"])
                 if json_data["Status"].get("Wifi") != None:
-                    rssi_sensor_sensor.set_value(json_data["Status"]["Wifi"])
+                    rssi_sensor.set_value(json_data["Status"]["Wifi"])
                 if json_data["Status"].get("Status") != None:
                     status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
