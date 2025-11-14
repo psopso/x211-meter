@@ -48,8 +48,9 @@ async def async_setup_entry(
     datetime_sensor = Xt211DatetimeSensor(device_info, entry_id)
     battery_sensor = Xt211BatterySensor(device_info, entry_id)
     wakeups_sensor = Xt211WakeupsSensor(device_info, entry_id)
+    rssi_sensor = Xt211RSSISensor(device_info, entry_id)
 
-    entities = [status_sensor, raw_data_sensor, datetime_sensor, battery_sensor, wakeups_sensor]
+    entities = [status_sensor, raw_data_sensor, datetime_sensor, battery_sensor, wakeups_sensor, rssi_sensor]
     async_add_entities(entities)
 
     # Uložíme si entity do hass.data, abychom k nim měli přístup později
@@ -118,6 +119,8 @@ async def async_setup_entry(
             if json_data.get("Status") != None:
                 if json_data["Status"].get("Wakeups") != None:
                     wakeups_sensor.set_value(json_data["Status"]["Wakeups"])
+                if json_data["Status"].get("RSSI") != None:
+                    rssi_sensor_sensor.set_value(json_data["Status"]["RSSI"])
                 if json_data["Status"].get("Status") != None:
                     status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
@@ -203,6 +206,22 @@ class Xt211WakeupsSensor(SensorEntity):
     def __init__(self, device_info, entry_id):
         self._attr_name = "XT211 Wakeups"
         self._attr_unique_id = f"{entry_id}_wakeups"
+        self._attr_device_info = device_info
+        self._state = None
+
+    def set_value(self, val):
+        self._state = val
+        if self.hass:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self):
+        return self._state
+
+class Xt211RSSISensor(SensorEntity):
+    def __init__(self, device_info, entry_id):
+        self._attr_name = "XT211 RSSI"
+        self._attr_unique_id = f"{entry_id}_rssi"
         self._attr_device_info = device_info
         self._state = None
 
