@@ -109,7 +109,7 @@ async def async_setup_entry(
                 # Aktualizujeme seznam entit v hass.data
                 hass.data[DOMAIN][entry.entry_id] = entities
 
-        await handle_data(payload)
+        await handle_data(hass, payload)
 
 # Examples
 # {"battery":{"Voltage":4.15749979019165,"SOC":96.234375}}
