@@ -7,6 +7,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from datetime import datetime
+
 from .const import (
     DOMAIN,
     SENSOR_MAP,
@@ -72,32 +74,40 @@ async def async_setup_entry(
             return
 
         raw_data_sensor.set_raw(payload)
-
-        if "datetime" in payload:
+        
+        dt = None
+        dt1 = None
+        
+        if native_value() is None:
+            datetime_sensor.set_value(payload["data"]["reading_datetime"])
+        else:
+            dt = datetime.strptime(payload["data"]["reading_datetime"], "%a %Y-%m-%d %H:%M:%S %Z")
+            dt1 = datetime.strptime(native_value(), "%a %Y-%m-%d %H:%M:%S %Z")
             datetime_sensor.set_value(payload["data"]["reading_datetime"])
 
-        new_entities = []
-        # Získáme seznam již existujících OBIS senzorů z hass.data
-        current_obis_sensors = {
-            e.obis: e for e in hass.data[DOMAIN].get(entry.entry_id, []) if isinstance(e, Xt211ObisSensor)
-        }
+        if (dt is None) or (dt > dt1):
+            new_entities = []
+            # Získáme seznam již existujících OBIS senzorů z hass.data
+            current_obis_sensors = {
+                e.obis: e for e in hass.data[DOMAIN].get(entry.entry_id, []) if isinstance(e, Xt211ObisSensor)
+            }
 
-        for obis, value in payload["data"].get("values", {}).items():
-            sensor = current_obis_sensors.get(obis)
+            for obis, value in payload["data"].get("values", {}).items():
+                sensor = current_obis_sensors.get(obis)
 
-            if sensor is None:
-                _LOGGER.debug(f"Creating new sensor for OBIS code: {obis}")
-                # <--- ZMĚNA: Předáváme entry_id i sem
-                sensor = Xt211ObisSensor(device_info, entry_id, obis)
-                entities.append(sensor)
-                new_entities.append(sensor)
-            
-            sensor.set_value(value)
+                if sensor is None:
+                    _LOGGER.debug(f"Creating new sensor for OBIS code: {obis}")
+                    # <--- ZMĚNA: Předáváme entry_id i sem
+                    sensor = Xt211ObisSensor(device_info, entry_id, obis)
+                    entities.append(sensor)
+                    new_entities.append(sensor)
+                
+                sensor.set_value(value)
 
-        if new_entities:
-            async_add_entities(new_entities)
-            # Aktualizujeme seznam entit v hass.data
-            hass.data[DOMAIN][entry.entry_id] = entities
+            if new_entities:
+                async_add_entities(new_entities)
+                # Aktualizujeme seznam entit v hass.data
+                hass.data[DOMAIN][entry.entry_id] = entities
 
         await handle_data(payload)
 
