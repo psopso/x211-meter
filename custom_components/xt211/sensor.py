@@ -78,11 +78,11 @@ async def async_setup_entry(
         dt = None
         dt1 = None
         
-        if datetime_sensor.native_value() is None:
+        if datetime_sensor.native_value is None:
             datetime_sensor.set_value(payload["data"]["reading_datetime"])
         else:
             dt = datetime.strptime(payload["data"]["reading_datetime"], "%a %Y-%m-%d %H:%M:%S %Z")
-            dt1 = datetime.strptime(datetime_sensor.native_value(), "%a %Y-%m-%d %H:%M:%S %Z")
+            dt1 = datetime.strptime(datetime_sensor.native_value, "%a %Y-%m-%d %H:%M:%S %Z")
             datetime_sensor.set_value(payload["data"]["reading_datetime"])
 
         if (dt is None) or (dt > dt1):
