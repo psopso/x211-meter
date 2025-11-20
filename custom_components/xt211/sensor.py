@@ -74,7 +74,7 @@ async def async_setup_entry(
         raw_data_sensor.set_raw(payload)
 
         if "datetime" in payload:
-            datetime_sensor.set_value(payload["datetime"])
+            datetime_sensor.set_value(payload["data"]["reading_datetime"])
 
         new_entities = []
         # Získáme seznam již existujících OBIS senzorů z hass.data
