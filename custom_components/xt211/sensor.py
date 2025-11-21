@@ -31,12 +31,17 @@ async def async_setup_entry(
 ):
     """Set up the XT211 sensor platform."""
     
-    topic_data = entry.data.get(CONF_TOPIC_DATA, DEFAULT_TOPIC_DATA)
-    topic_status = entry.data.get(CONF_TOPIC_STATUS, DEFAULT_TOPIC_STATUS)
-    entry_id = entry.entry_id # <--- ZÍSKÁNÍ UNIKÁTNÍHO ID ZÁZNAMU
+    # Vezmeme data z instalace a přepíšeme je případnými změnami z Options
+    config = {**entry.data, **entry.options} 
+
+    # Nyní čteme hodnoty z této sloučené proměnné 'config', ne z 'entry.data'
+    topic_data = config.get(CONF_TOPIC_DATA, DEFAULT_TOPIC_DATA)
+    topic_status = config.get(CONF_TOPIC_STATUS, DEFAULT_TOPIC_STATUS)
+    
+    entry_id = entry.entry_id 
     
     _LOGGER.info(f"Setting up XT211 with Data Topic: {topic_data} and Status Topic: {topic_status}")
-
+    
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry_id)}, # Použijeme entry_id pro unikátnost zařízení
         name="XT211 Meter",
