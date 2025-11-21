@@ -115,7 +115,7 @@ async def async_setup_entry(
                 # Aktualizujeme seznam entit v hass.data
                 hass.data[DOMAIN][entry.entry_id] = entities
 
-        await handle_data(hass, payload)
+        await handle_data(hass, payload, config)
 
 # Examples
 # {"battery":{"Voltage":4.15749979019165,"SOC":96.234375}}
@@ -144,7 +144,7 @@ async def async_setup_entry(
                     status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
         
-        await handle_status(hass, msg.payload)
+        await handle_status(hass, msg.payload, config)
     
     await mqtt.async_subscribe(hass, topic_data, message_received_data)
     await mqtt.async_subscribe(hass, topic_status, message_received_status)
