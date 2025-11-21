@@ -6,9 +6,9 @@ CONF_TOPIC_STATUS = "mqtt_topic_status"
 
 CONF_INFLUXDB_HOST = "influxdb_host"
 CONF_INFLUXDB_PORT = "influxdb_port"
-CONF_INFLUXDB_DATABASE = "influxdb_database"
-CONF_INFLUXDB_USERNAME = "influxdb_username"
-CONF_INFLUXDB_PASSWORD = "influxdb_password"
+CONF_INFLUXDB_BUCKET = "influxdb_bucket"
+CONF_INFLUXDB_ORG = "influxdb_org"
+CONF_INFLUXDB_TOKEN = "influxdb_token"
 
 # --- Výchozí hodnoty MQTT topiců ---
 DEFAULT_TOPIC_DATA = "elektromer/data"

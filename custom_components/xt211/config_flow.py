@@ -10,9 +10,9 @@ from .const import (
     DEFAULT_TOPIC_STATUS,
     CONF_INFLUXDB_HOST,
     CONF_INFLUXDB_PORT,
-    CONF_INFLUXDB_DATABASE,
-    CONF_INFLUXDB_USERNAME,
-    CONF_INFLUXDB_PASSWORD
+    CONF_INFLUXDB_BUCKET,
+    CONF_INFLUXDB_ORG,
+    CONF_INFLUXDB_TOKEN
 
 )
 
@@ -36,9 +36,9 @@ class Xt211ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_TOPIC_STATUS, default=DEFAULT_TOPIC_STATUS): str,
                 vol.Required(CONF_INFLUXDB_HOST): str,
                 vol.Required(CONF_INFLUXDB_PORT, default="8086"): str,
-                vol.Required(CONF_INFLUXDB_DATABASE): str,
-                vol.Optional(CONF_INFLUXDB_USERNAME, default=""): str,
-                vol.Required(CONF_INFLUXDB_PASSWORD): str,
+                vol.Required(CONF_INFLUXDB_BUCKET): str,
+                vol.Optional(CONF_INFLUXDB_ORG, default=""): str,
+                vol.Required(CONF_INFLUXDB_TOKEN): str,
             }
         )
         return self.async_show_form(step_id="user", data_schema=data_schema)
@@ -87,15 +87,15 @@ class Xt211OptionsFlowHandler(config_entries.OptionsFlow):
                 ): str,
                 vol.Required(
                     CONF_INFLUXDB_DATABASE,
-                    default=current_config.get(CONF_INFLUXDB_DATABASE, ""),
+                    default=current_config.get(CONF_INFLUXDB_BUCKET, ""),
                 ): str,
                 vol.Optional(
                     CONF_INFLUXDB_USERNAME,
-                    default=current_config.get(CONF_INFLUXDB_USERNAME, ""),
+                    default=current_config.get(CONF_INFLUXDB_ORG, ""),
                 ): str,
                 vol.Required(
                     CONF_INFLUXDB_PASSWORD,
-                    default=current_config.get(CONF_INFLUXDB_PASSWORD, ""),
+                    default=current_config.get(CONF_INFLUXDB_TOKEN, ""),
                 ): str,
             }
         )
