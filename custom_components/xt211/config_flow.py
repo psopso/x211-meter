@@ -61,40 +61,41 @@ class Xt211OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the options."""
         if user_input is not None:
-            # Uložíme data. Tím se automaticky spustí update_listener
             return self.async_create_entry(title="", data=user_input)
 
-        # Zobrazíme formulář, ale jako výchozí hodnoty použijeme
-        # ty, které jsou aktuálně nastavené.
+        # --- OPRAVA: Načtení aktuálních hodnot ---
+        # Podíváme se, jestli už máme něco v options, jinak bereme data
+        current_config = {**self.config_entry.data, **self.config_entry.options}
+
         data_schema = vol.Schema(
             {
                 vol.Required(
                     CONF_TOPIC_DATA,
-                    default=self.config_entry.data.get(CONF_TOPIC_DATA),
+                    default=current_config.get(CONF_TOPIC_DATA, DEFAULT_TOPIC_DATA),
                 ): str,
                 vol.Required(
                     CONF_TOPIC_STATUS,
-                    default=self.config_entry.data.get(CONF_TOPIC_STATUS),
+                    default=current_config.get(CONF_TOPIC_STATUS, DEFAULT_TOPIC_STATUS),
                 ): str,
                 vol.Required(
                     CONF_INFLUXDB_HOST,
-                    default=self.config_entry.data.get(CONF_INFLUXDB_HOST, ""),
+                    default=current_config.get(CONF_INFLUXDB_HOST, ""),
                 ): str,
                 vol.Required(
                     CONF_INFLUXDB_PORT,
-                    default=self.config_entry.data.get(CONF_INFLUXDB_PORT, "8086"),
+                    default=current_config.get(CONF_INFLUXDB_PORT, "8086"),
                 ): str,
                 vol.Required(
                     CONF_INFLUXDB_DATABASE,
-                    default=self.config_entry.data.get(CONF_INFLUXDB_DATABASE, ""),
+                    default=current_config.get(CONF_INFLUXDB_DATABASE, ""),
                 ): str,
                 vol.Optional(
                     CONF_INFLUXDB_USERNAME,
-                    default=self.config_entry.data.get(CONF_INFLUXDB_USERNAME, ""),
+                    default=current_config.get(CONF_INFLUXDB_USERNAME, ""),
                 ): str,
                 vol.Required(
                     CONF_INFLUXDB_PASSWORD,
-                    default=self.config_entry.data.get(CONF_INFLUXDB_PASSWORD, ""),
+                    default=current_config.get(CONF_INFLUXDB_PASSWORD, ""),
                 ): str,
             }
         )
