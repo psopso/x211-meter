@@ -86,15 +86,15 @@ class Xt211OptionsFlowHandler(config_entries.OptionsFlow):
                     default=current_config.get(CONF_INFLUXDB_PORT, "8086"),
                 ): str,
                 vol.Required(
-                    CONF_INFLUXDB_DATABASE,
+                    CONF_INFLUXDB_BUCKET,
                     default=current_config.get(CONF_INFLUXDB_BUCKET, ""),
                 ): str,
                 vol.Optional(
-                    CONF_INFLUXDB_USERNAME,
+                    CONF_INFLUXDB_ORG,
                     default=current_config.get(CONF_INFLUXDB_ORG, ""),
                 ): str,
                 vol.Required(
-                    CONF_INFLUXDB_PASSWORD,
+                    CONF_INFLUXDB_TOKEN,
                     default=current_config.get(CONF_INFLUXDB_TOKEN, ""),
                 ): str,
             }
