@@ -127,7 +127,8 @@ async def handle_status(hass, payload_str, config):
         fields = []
         for k, v in data["Status"].items():
             if isinstance(v, (int, float)):
-                #fields.append(f"status_{k.lower()}={float(v)}")
+                if 1=2:
+                    fields.append(f"status_{k.lower()}={float(v)}")
             elif isinstance(v, str):
                  # Stringy musí být v uvozovkách (tzv. "quoted string literal")
                  if ({k.lower()} = "status") or ({k.lower()} = "statustext"):
