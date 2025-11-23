@@ -80,7 +80,7 @@ async def handle_data(hass, payload, config):
             fields_str = ",".join(fields)
             
             # Formát: measurement,tagy field1=hodnota,field2=hodnota TIMESTAMP
-            line = f"xt211_energy,{tags} {fields_str} {timestamp_ns}"
+            line = f"Home_energy,{tags} {fields_str} {timestamp_ns}"
             lines.append(line)
 
         if lines:
