@@ -93,6 +93,7 @@ async def handle_data(hass, payload, config):
 # ----------------------------------------------------------------------
 
 async def handle_status(hass, payload_str, config):
+    return  #Status se neposílá do influxdb2
     """Zpracování statusu (baterie, atd.) a odeslání do InfluxDB."""
     host = config.get(CONF_INFLUXDB_HOST)
     if not host:
@@ -127,7 +128,7 @@ async def handle_status(hass, payload_str, config):
         fields = []
         for k, v in data["Status"].items():
             if isinstance(v, (int, float)):
-                if 1==2:
+                if 1==1:
                     fields.append(f"status_{k.lower()}={float(v)}")
             elif isinstance(v, str):
                  # Stringy musí být v uvozovkách (tzv. "quoted string literal")
