@@ -112,7 +112,7 @@ async def handle_status(hass, payload_str, config):
     # Tím zajistíme, že status bude mít čas co nejblíže realitě.
 
     # Zpracování baterie
-'''    
+    '''    
     if "battery" in data:
         fields = []
         for k, v in data["battery"].items():
@@ -121,7 +121,7 @@ async def handle_status(hass, payload_str, config):
         
         if fields:
             lines.append(f"xt211_status,{tags} {','.join(fields)}")
-'''
+    '''
     # Zpracování obecného statusu
     if "Status" in data:
         fields = []
