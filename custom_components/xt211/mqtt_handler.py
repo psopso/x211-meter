@@ -112,6 +112,7 @@ async def handle_status(hass, payload_str, config):
     # Tím zajistíme, že status bude mít čas co nejblíže realitě.
 
     # Zpracování baterie
+'''    
     if "battery" in data:
         fields = []
         for k, v in data["battery"].items():
@@ -120,16 +121,17 @@ async def handle_status(hass, payload_str, config):
         
         if fields:
             lines.append(f"xt211_status,{tags} {','.join(fields)}")
-
+'''
     # Zpracování obecného statusu
     if "Status" in data:
         fields = []
         for k, v in data["Status"].items():
             if isinstance(v, (int, float)):
-                fields.append(f"status_{k.lower()}={float(v)}")
+                #fields.append(f"status_{k.lower()}={float(v)}")
             elif isinstance(v, str):
                  # Stringy musí být v uvozovkách (tzv. "quoted string literal")
-                 fields.append(f'status_{k.lower()}="{v}"')
+                 if ({k.lower()} = "status") or ({k.lower()} = "statustext"):
+                    fields.append(f'status_{k.lower()}="{v}"')
         
         if fields:
             lines.append(f"xt211_status,{tags} {','.join(fields)}")
