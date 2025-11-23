@@ -144,7 +144,7 @@ async def async_setup_entry(
                     status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
         
-        await handle_status(hass, msg.payload, config)
+        //await handle_status(hass, msg.payload, config)
     
     await mqtt.async_subscribe(hass, topic_data, message_received_data)
     await mqtt.async_subscribe(hass, topic_status, message_received_status)
