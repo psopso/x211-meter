@@ -75,8 +75,9 @@ async def handle_data(hass, payload, config):
         for key, value in data_values.items():
             if isinstance(value, (int, float)):
                 # Všechna číselná data ukládáme jako float pro InfluxDB
-                #fields.append(f"{key}={float(value)}")
-                fields.append(f'"{key}"={float(value)}')
+                clean_key = key.replace('.', '_')
+                fields.append(f"{clean_key}={float(value)}")
+                #fields.append(f'"{key}"={float(value)}')
         
         if fields:
             fields_str = ",".join(fields)
