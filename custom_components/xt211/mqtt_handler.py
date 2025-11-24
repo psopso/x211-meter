@@ -8,6 +8,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 # Pokud používáte externí modul jako 'dateutil', musíte ho přidat do manifest.json.
 # Pro jednoduchost se spoléháme na standardní funkce a známý formát.
 # Váš funkční formát by mohl být: "%a %Y-%m-%d %H:%M:%S %Z"
+# Mon 2025-11-24 07:23:38 GMT
 KNOWN_TIME_FORMAT = "%a %Y-%m-%d %H:%M:%S %Z"
 
 from .const import (
@@ -74,7 +75,8 @@ async def handle_data(hass, payload, config):
         for key, value in data_values.items():
             if isinstance(value, (int, float)):
                 # Všechna číselná data ukládáme jako float pro InfluxDB
-                fields.append(f"{key}={float(value)}")
+                #fields.append(f"{key}={float(value)}")
+                fields.append(f'"{key}"={float(value)}')
         
         if fields:
             fields_str = ",".join(fields)
