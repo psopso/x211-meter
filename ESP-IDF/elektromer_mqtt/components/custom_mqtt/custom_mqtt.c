@@ -9,6 +9,7 @@
 #include "cJSON.h"
 #include "custom_ota.h"
 #include "custom_wifi.h"
+#include "my_debug.h"
 
 static const char *TAG = "CUSTOM_MQTT";
 //static EventGroupHandle_t s_wifi_event_group;
@@ -158,7 +159,11 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
    	        int wakeups = va_arg(args, int);
    	        time_t firstBootTime = va_arg(args, time_t);
    	        int lastWait = va_arg(args, int);
+            int wifiSignal = va_arg(args, int);
 
+			char wifiSignalS[10];
+			snprintf(wifiSignalS, sizeof(wifiSignalS), "%d", wifiSignal);			
+			
 			char buf[80];
 			struct tm  ts;
 		    ts = *localtime(&firstBootTime);
@@ -173,9 +178,24 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
    			cJSON_AddNumberToObject(statustype, "LastWait", lastWait);	
    			cJSON_AddStringToObject(statustype, "FirstBootTime", (const char *)&buf);	
    			cJSON_AddStringToObject(statustype, "BuildDatetime", get_build_datetime());	
+   			cJSON_AddStringToObject(statustype, "Wifi", wifiSignalS);	
    			json_string = strdup(cJSON_PrintUnformatted(root));		
 			break;
 		}
+        case CMD_DEBUG: {
+			char *debug = va_arg(args, char *);
+            char *debug1 = va_arg(args, char *);
+		    ESP_LOGI(TAG, "Sending status message... (Debug: %s, Debug1: %s)", debug, debug1);
+		    
+            cJSON_AddStringToObject(root, "datetime", getCurrentDatetime());
+			cJSON_AddItemToObject(root, "debug", statustype);    
+		    cJSON_AddStringToObject(statustype, "Debug", debug);
+    		cJSON_AddStringToObject(statustype, "Debug1", debug1);
+
+    		json_string = strdup(cJSON_PrintUnformatted(root));
+    		break;
+		}
+		
     }
 
     if (esp_mqtt_client_publish(client, MQTT_STATUS_TOPIC, json_string, 0, 1, 0) > 0) successful_sends++; else failed_sends++;
@@ -190,6 +210,10 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
     esp_mqtt_client_destroy(client);
 }
 
+void mqtt_send_debug(const char *topic, const char *payload) {
+	custom_mqtt_send_status(2, topic, payload);	
+}
+
 char strftime_buf[64];
 char * getCurrentDatetime() {
 	time_t now = 0;
@@ -197,4 +221,16 @@ char * getCurrentDatetime() {
     struct tm  ts = *localtime(&now);
 	strftime(strftime_buf, sizeof(strftime_buf), "%c", &ts);
 	return strftime_buf;
+}
+
+void custom_mqtt_send_debug_queue_data(void) { 
+	char s[20];
+    for (int i = 0; i < storage_get_queue_count(); i++) {
+        data_queue_entry_t entry;
+        if (storage_get_queue_entry(i, &entry)) {
+			//entry.data.obis_1_8_0)
+			snprintf(s,20,"%lf", entry.data.obis_1_8_0);
+			my_debug_log("MQTTDEBUG", s);
+		}
+	}	
 }

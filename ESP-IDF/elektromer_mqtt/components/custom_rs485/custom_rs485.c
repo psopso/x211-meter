@@ -37,38 +37,63 @@ void rs485_init(void) {
 
 int rs485_read_frame(uint8_t *data, uint32_t length, time_t *frame_reception_time)
 {
-    if (!data || length == 0) {
-        return -1; // neplatný parametr
+    if (!data || length < 2) { // Upraveno: buffer musí mít místo alespoň pro 2 byty
+        return -1; // neplatný parametr nebo malý buffer
     }
 
-    // Čekat na platný datový rámec
-    ESP_LOGI(TAG, "Cekam na paket.");
+    ESP_LOGI(TAG, "Cekam na hlavicku 0x0F 0x80.");
 
     uint8_t byte;
     int read_len = 0;
     int64_t start_time = esp_timer_get_time();
+    
+    bool waiting_for_second_byte = false; // Příznak, že jsme našli 0x0F a čekáme na 0x80
 
-    // Čekání na první byte 0x0F
+    // Čekání na sekvenci 0x0F 0x80
     while (true) {
-        int n = uart_read_bytes(UART_PORT_NUM, &byte, 1, pdMS_TO_TICKS(100)); // 100ms polling
+        int n = uart_read_bytes(UART_PORT_NUM, &byte, 1, pdMS_TO_TICKS(100)); 
         
         if (n == 1) {
-            if (byte == 0x0F) {
-				*frame_reception_time = time(NULL);
-                data[read_len++] = byte;
-                break;
+            if (waiting_for_second_byte) {
+                // Našli jsme už 0x0F, teď testujeme, co přišlo potom
+                if (byte == 0x80) {
+                    // SKVĚLÉ: Máme kompletní hlavičku 0x0F 0x80
+                    *frame_reception_time = time(NULL);
+                    data[read_len++] = 0x0F; // Uložíme první byte
+                    data[read_len++] = 0x80; // Uložíme druhý byte
+                    break; // Vyskočíme z hledací smyčky a jdeme načítat zbytek
+                } 
+                else if (byte == 0x0F) {
+                    // Přišlo 0x0F a hned potom zase 0x0F. 
+                    // Považujeme toto nové 0x0F za potenciální začátek nové sekvence.
+                    // Příklad: Data jsou "00 0F 0F 80". První 0F aktivovalo čekání, 
+                    // druhé 0F ho udržuje, 80 ho potvrdí.
+                    waiting_for_second_byte = true; 
+                } 
+                else {
+                    // Přišlo 0x0F a potom něco jiného (např. 0x55). 
+                    // Není to naše hlavička, resetujeme hledání.
+                    waiting_for_second_byte = false;
+                }
+            } else {
+                // Čekáme na první byte 0x0F
+                if (byte == 0x0F) {
+                    waiting_for_second_byte = true;
+                }
             }
         }
+
+        // Kontrola globálního timeoutu pro nalezení hlavičky
         if ((esp_timer_get_time() - start_time) / 1000 / 1000 > FRAME_WAIT_TIMEOUT_S) {
-            return -2; // timeout čekání na první byte
+            return -2; // timeout čekání na start sekvenci
         }
     }
 
-    // Čtení zbytku rámce, dokud přichází data
+    // Čtení zbytku rámce (stejné jako v původním kódu)
     while (read_len < length) {
         int n = uart_read_bytes(UART_PORT_NUM,
                                 &data[read_len],
-                                50,
+                                (length - read_len), // Číst jen do konce bufferu
                                 pdMS_TO_TICKS(FRAME_END_TIMEOUT_MS));
         if (n > 0) {
             read_len += n;

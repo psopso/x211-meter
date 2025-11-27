@@ -41,11 +41,16 @@
 #define NTP_SERVER              "pool.ntp.org"
 
 #ifndef ENV_TEST
-#define DEEP_SLEEP_INTERVAL_MIN 15      // v minutách (15*60=900)
-#define DEEP_SLEEP_INTERVAL_MIN_NTP 15      // v minutách
+  #if CONFIG_MY_DEBUG_ENABLED
+    #define DEEP_SLEEP_INTERVAL_MIN 5      // v minutách (15*60=900)
+    #define DEEP_SLEEP_INTERVAL_MIN_NTP 5      // v minutách
+  #else
+    #define DEEP_SLEEP_INTERVAL_MIN 15      // v minutách (15*60=900)
+    #define DEEP_SLEEP_INTERVAL_MIN_NTP 15      // v minutách
+  #endif
 #else
-#define DEEP_SLEEP_INTERVAL_MIN 5        //15      // v minutách (15*60=900)
-#define DEEP_SLEEP_INTERVAL_MIN_NTP 5    //15      // v minutách
+#define DEEP_SLEEP_INTERVAL_MIN 5      // v minutách (15*60=900)
+#define DEEP_SLEEP_INTERVAL_MIN_NTP 5      // v minutách
 #endif
 
 #define TIME_SYNC_INTERVAL_MIN  60      // v minutách (použito pro rozhodování, ne pro buzení)
@@ -53,7 +58,7 @@
 #define FRAME_WAIT_TIMEOUT_S    70      // v sekundách (o něco více než 60s)
 #define FRAME_END_TIMEOUT_MS    100
 #define FAILED_FRAME_ATTEMPTS   5
-#define DEEP_SLEEP_OFFSET_S     15      // v sekundách (o kolik dříve se probudit)(900-15=885)
+#define DEEP_SLEEP_OFFSET_S     10      // v sekundách (o kolik dříve se probudit)(900-15=885)
 
 // --- Application Settings ---
 #define UART_PORT_NUM           UART_NUM_2

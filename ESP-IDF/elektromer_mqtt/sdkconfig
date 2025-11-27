@@ -556,7 +556,7 @@ CONFIG_OTA_URL="http://192.168.143.151:8123/api/download/elektromer_mqtt_test.bi
 #
 # My Debugging Options
 #
-CONFIG_MY_DEBUG_ENABLED=y
+# CONFIG_MY_DEBUG_ENABLED is not set
 # end of My Debugging Options
 
 #

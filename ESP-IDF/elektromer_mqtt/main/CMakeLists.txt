@@ -25,6 +25,7 @@ idf_component_register(
       custom_ota
       custom_wifi
       custom_led
+      my_debug
       driver
       nvs_flash
       

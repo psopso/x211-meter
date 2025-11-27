@@ -67,3 +67,14 @@ config OTA_URL
 	otaurl (ota url)
 
 endmenu
+
+menu "My Debugging Options"
+
+    config MY_DEBUG_ENABLED
+        bool "Enable MQTT Debug Logger"
+        default n
+        help
+            If set, debug messages will be routed via the registered sender (MQTT).
+            If unset, log calls will compile to empty operations.
+
+endmenu

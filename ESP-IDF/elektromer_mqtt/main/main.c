@@ -23,6 +23,8 @@
 #include "custom_wifi.h"
 #include "custom_ota.h"
 
+#include "my_debug.h"
+
 static const char *TAG = "MAIN";
 
 RTC_DATA_ATTR int bootCount = 0;
@@ -36,9 +38,22 @@ bool wifiInitialized = false;
 
 void ota_update();
 const char *get_build_datetime(void);
+void sendBatteryStatus();
 
 void app_main(void) {
+	// Řekneme `my_debug` modulu, aby používal naši MQTT funkci.
+    // Od této chvíle bude my_debug_log() posílat zprávy přes MQTT.
+    #if CONFIG_MY_DEBUG_ENABLED
+    	my_debug_register_sender(mqtt_send_debug);
+    	custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+    	vTaskDelay(pdMS_TO_TICKS(3000));
+    	ota_update();
+    	my_debug_log("MAIN", "Aplikace nastartovala, debug je aktivní.");
+    	//my_debug_log_formatted("MAIN", "Hodnota senzoru: %d C", 25);
+	#endif
+
 	time_t startTime = 0;
+	int8_t signalStrength = 0;
 	time(&startTime);
 
     char s[50];
@@ -84,7 +99,9 @@ void app_main(void) {
 		bootCount += 1;
         ESP_LOGI(TAG, "První spuštění po restartu.");
         // TODO: Pro první spuštění může být nutné se připojit k WiFi a synchronizovat čas
+        #ifndef CONFIG_MY_DEBUG_ENABLED
         custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+		#endif
 		        
         if (custom_wifi_is_connected()) {
 			wifiInitialized = true;
@@ -94,7 +111,8 @@ void app_main(void) {
 	        esp_err_t ntp_esp_status = time_sync_from_ntp();
 	        if (ntp_esp_status == ESP_FAIL) {
 		        time(&firstBootTime);
-				custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0);
+		        signalStrength = check_signal_strength();
+				custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, signalStrength);
 				uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
 				ESP_LOGI(TAG, "NTP Failed - Vstupuji do deep sleep na %llu sekund.", sleep_duration_us / 1000000);
 				esp_sleep_enable_timer_wakeup(sleep_duration_us);
@@ -105,11 +123,13 @@ void app_main(void) {
 //	        ESP_ERROR_CHECK(ntp_esp_status);
 //           custom_wifi_disconnect();
 	        time(&firstBootTime);
-			custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0);
+	        signalStrength = check_signal_strength();
+			custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0, signalStrength);
         } else {
             ESP_LOGW("MAIN", "Wi-Fi je odpojeno, čekám...");
         }
-        vTaskDelay(pdMS_TO_TICKS(3000));        
+        vTaskDelay(pdMS_TO_TICKS(3000));
+        mqttWakeUpCycleCounter += 1;        
     } else {
 		wakeUpCycleCounter += 1;
 		mqttWakeUpCycleCounter += 1;
@@ -122,7 +142,7 @@ void app_main(void) {
     time_t frame_reception_time;
     
     bool rs485completed = false;
-    
+    my_debug_log("MAIN", "Cekam na frame.");
     while (!rs485completed) {    
 	    int length = rs485_read_frame(buffer, UART_BUFFER_SIZE, &frame_reception_time);
 	    if (length > 0)
@@ -135,6 +155,7 @@ void app_main(void) {
 	    
 //	    if (false) {
 	    if (length > 0) {
+			my_debug_log("MAIN", "Frame prijat.");
 //			time_t frameTime = 0;
 //			time(&frameTime);
 
@@ -165,13 +186,17 @@ void app_main(void) {
 				    if (!custom_wifi_is_connected()) {
 		    		    ESP_LOGI(TAG, "Zkusím WIFI po novu.");
 		        		vTaskDelay(pdMS_TO_TICKS(5000));
+		        		#ifndef CONFIG_MY_DEBUG_ENABLED
 		        		custom_wifi_init(WIFI_SSID, WIFI_PASSWORD,  WIFI_IP, WIFI_GW, WIFI_NETMASK);
+		        		#endif
 		        		vTaskDelay(pdMS_TO_TICKS(5000));
 					} 
 				} else {
 		    	    ESP_LOGI(TAG, "Zkusím WIFI po novu.");
 		        	vTaskDelay(pdMS_TO_TICKS(5000));
-		        	custom_wifi_init("KaiserData", "Tamade69",  "192.168.143.153", "192.168.143.250", "255.255.255.0");
+		        	#ifndef CONFIG_MY_DEBUG_ENABLED
+		        	custom_wifi_init(WIFI_SSID, WIFI_PASSWORD,  WIFI_IP, WIFI_GW, WIFI_NETMASK);
+		        	#endif
 		        	vTaskDelay(pdMS_TO_TICKS(5000));		
 				}
 				//Nepodarilo se 3x prijmout platny ramec
@@ -179,7 +204,9 @@ void app_main(void) {
     	    	ota_update();
     	    	
 				ESP_LOGE(TAG, "Nepodarilo se 3x po sobe prijmout platny ramec.");
-				custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0);
+				sendBatteryStatus();
+				signalStrength = check_signal_strength();
+				custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, signalStrength);
 				uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
 				ESP_LOGI(TAG, "RS485 Failed - Vstupuji do deep sleep na %llu sekund.", sleep_duration_us / 1000000);
 				esp_sleep_enable_timer_wakeup(sleep_duration_us);
@@ -197,7 +224,7 @@ void app_main(void) {
     localtime_r(&now, &timeinfo);
 
     // Odesíláme vždy na začátku hodiny (např. v prvních 15 minutách)
-    if ((first_boot) || (mqttWakeUpCycleCounter > 4)) {
+    if ((first_boot) || (mqttWakeUpCycleCounter >= 4)) {
 		mqttWakeUpCycleCounter = 0;
 		ESP_LOGI(TAG, "wifiInitialized: %b ", wifiInitialized);
 	   if (wifiInitialized) {
@@ -205,30 +232,30 @@ void app_main(void) {
 		    if (!custom_wifi_is_connected()) {
     		    ESP_LOGI(TAG, "Zkusím WIFI po novu.");
         		vTaskDelay(pdMS_TO_TICKS(5000));
+        		#ifndef CONFIG_MY_DEBUG_ENABLED
         		custom_wifi_init(WIFI_SSID, WIFI_PASSWORD,  WIFI_IP, WIFI_GW, WIFI_NETMASK);
+        		#endif
         		vTaskDelay(pdMS_TO_TICKS(5000));
 			} 
 		} else {
     	    ESP_LOGI(TAG, "Zkusím WIFI po novu.");
         	vTaskDelay(pdMS_TO_TICKS(5000));
-        	custom_wifi_init("KaiserData", "Tamade69",  "192.168.143.153", "192.168.143.250", "255.255.255.0");
+        	#ifndef CONFIG_MY_DEBUG_ENABLED
+        	custom_wifi_init(WIFI_SSID, WIFI_PASSWORD,  WIFI_IP, WIFI_GW, WIFI_NETMASK);
+        	#endif
         	vTaskDelay(pdMS_TO_TICKS(5000));		
 		}
 				
         ESP_LOGI(TAG, "Čas pro odeslání dat na MQTT a synchronizaci času.");
         custom_mqtt_send_data();
-        if (!first_boot)
-    	    custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter,firstBootTime, diff);
- 
-
-        #ifndef ENV_TEST
-        float voltage, soc;
-        if (battery_get_status(&voltage, &soc) == ESP_OK) {
-			ESP_LOGI(TAG, "Battery status: %f  %f", voltage, soc);
-//            custom_mqtt_send_status(voltage, soc);
-            custom_mqtt_send_status(CMD_BATTERY, voltage, soc);
+        
+        if (!first_boot) {
+            signalStrength = check_signal_strength();
+    	    custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter,firstBootTime, diff, signalStrength);
         }
-        #endif
+
+		sendBatteryStatus();
+		
         if (!first_boot) {
           //esp_err_t ntp_esp_status = 
           time_sync_from_ntp(); // Opravit čas
@@ -261,6 +288,17 @@ void app_main(void) {
     esp_deep_sleep_start();
 }
 
+void sendBatteryStatus()
+{
+	#ifndef ENV_TEST
+	float voltage, soc;
+	if (battery_get_status(&voltage, &soc) == ESP_OK) {
+		ESP_LOGI(TAG, "Battery status: %f  %f", voltage, soc);
+	    custom_mqtt_send_status(CMD_BATTERY, voltage, soc);
+	}
+	#endif	
+}
+
 void formatDatetime(time_t frametime, char *s) {
 	struct tm *local_time_info;
 	local_time_info = localtime(&frametime); // Convert to local time
@@ -276,12 +314,13 @@ const char *get_build_datetime(void)
 void ota_update() {
 	esp_err_t err = simple_ota_check_and_do_update(OTA_URL);
 	if (err == ESP_OK) {
-		custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0);	    
+		custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0);	    
 		ESP_LOGI(TAG, "Waiting 5s then restart");
     	vTaskDelay(pdMS_TO_TICKS(5000));
     	esp_restart();
     }
 }
+
 
 //Podmíněný překlad
 /*

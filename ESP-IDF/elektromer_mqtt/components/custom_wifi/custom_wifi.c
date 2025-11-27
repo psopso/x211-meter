@@ -9,7 +9,7 @@
 #include "lwip/ip_addr.h"
 #include "nvs_flash.h"
 #include "custom_wifi.h"
-
+#include "esp_wifi_types.h"
 
 static const char *TAG = "custom_wifi";
 
@@ -141,6 +141,33 @@ static void wifi_reconnect_task(void *pv)
     }
 }
 
+/**
+ * @brief Získá aktuální RSSI (sílu signálu) připojené Wi-Fi.
+ */
+esp_err_t custom_wifi_get_rssi(int8_t *rssi_out)
+{
+    if (rssi_out == NULL) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    // Struktura pro uložení informací o AP
+    wifi_ap_record_t ap_info;
+
+    // Zavoláme API funkci pro získání informací o připojeném AP
+    esp_err_t err = esp_wifi_sta_get_ap_info(&ap_info);
+
+    if (err == ESP_OK) {
+        // Povedlo se, uložíme RSSI
+        *rssi_out = ap_info.rssi;
+        return ESP_OK;
+    } else {
+        // Nepovedlo se (pravděpodobně nejsme připojeni)
+        // Vrátíme chybový kód, který jsme dostali
+        *rssi_out = 0; // Pro jistotu nastavíme výstup na 0
+        return err;
+    }
+}
+
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
                                int32_t event_id, void* event_data)
 {
@@ -155,4 +182,31 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         ESP_LOGI(TAG, "Got IP: " IPSTR, IP2STR(&event->ip_info.ip));
         xEventGroupSetBits(wifi_event_group, WIFI_CONNECTED_BIT);
     }
+}
+
+#include "esp_log.h"
+#include "custom_wifi.h" // Ujistěte se, že máte tento include
+
+// ... v nějakém tasku nebo funkci:
+
+int8_t check_signal_strength(void)
+{
+    int8_t current_rssi = 0;
+    esp_err_t ret = custom_wifi_get_rssi(&current_rssi);
+
+    if (ret == ESP_OK) {
+        ESP_LOGI("WIFI_RSSI", "Aktuální síla signálu: %d dBm", current_rssi);
+        
+        // Hodnoty RSSI jsou záporné:
+        // -30 dBm: Vynikající (stojíte vedle routeru)
+        // -60 dBm: Velmi dobrý
+        // -70 dBm: Dobrý, spolehlivý
+        // -80 dBm: Slabý, může vypadávat
+        // -90 dBm: Velmi špatný
+    } else if (ret == ESP_ERR_WIFI_NOT_CONNECT) {
+        ESP_LOGW("WIFI_RSSI", "Nelze získat RSSI, Wi-Fi není připojena.");
+    } else {
+        ESP_LOGE("WIFI_RSSI", "Chyba při získávání RSSI: %s", esp_err_to_name(ret));
+    }
+    return current_rssi;
 }

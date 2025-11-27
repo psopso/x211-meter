@@ -1,8 +1,12 @@
 #include "custom_dlms.h"
 #include "esp_log.h"
 #include "dlms_parser.h"
-static const char *TAG = "DLMS_PARSER";
+#include "my_debug.h"
+#include <stdio.h>
 
+static const char *TAG = "DLMS_PARSER";
+char s[77];
+   	
 void storeOBISToData(dlms_data_t *data, char *obis, char *svalue){
 	const char obis0[] = "1.8.0";
 	const char obis1[] = "1.8.1";
@@ -59,15 +63,21 @@ esp_err_t dlms_parse_frame(const uint8_t *buffer, int length, dlms_data_t *data)
 	} dlms_result_t;
 */
 
+    my_debug_log_hex("RS485", buffer);
+    
 	dlms_result_t dlmsresult = parse_dlms(buffer, length);
-
+	snprintf(s, 77, "Delka: %i/%i", length, dlmsresult.count);
+	my_debug_log("DLMS", s);
+	
 	for (size_t i = 0; i < dlmsresult.count; i++) {
     	dlms_item_t *item = &dlmsresult.items[i];  // ukazatel na i-tou položku
     	printf("OBIS: %s => %s\n", item->obis, item->value);
+    	snprintf(s, 77, "%s => %s", item->obis, item->value);
+    	my_debug_log("DLMS", s);
     	storeOBISToData(data, item->obis, item->value);
 	}
 
-    ESP_LOGI(TAG, "Parsing complete (using dummy data).");
+    ESP_LOGI(TAG, "Parsing complete.");
 
     // Pokud parsování proběhne v pořádku, vraťte ESP_OK
     return ESP_OK;
