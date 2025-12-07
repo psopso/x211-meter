@@ -44,4 +44,5 @@ SENSOR_MAP = {
 
     "14.7.0": {"name": "Frequency", "unit": "Hz"},
     "13.7.0": {"name": "Power Factor", "unit": None},
+    "96.1.1": {"name": "Serial Number", "unit": None}
 }
