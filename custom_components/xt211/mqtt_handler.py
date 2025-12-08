@@ -70,6 +70,7 @@ async def handle_data(hass, payload, config):
         lines = []
         # 'device=XT211' je tag (indexované)
         tags = "device=XT211" 
+        sn=""
         
         fields = []
         for key, value in data_values.items():
@@ -78,6 +79,13 @@ async def handle_data(hass, payload, config):
                 clean_key = key.replace('.', '_')
                 fields.append(f"{clean_key}={float(value)}")
                 #fields.append(f'"{key}"={float(value)}')
+            if isinstance(value, (string)):
+                # string by mělo být sériové číslo
+                #clean_key = key.replace('.', '_')
+                sn = value
+
+        # 'device=XT211' je tag (indexované)
+        tags = "device=XT211,"+"meter="+sn
         
         if fields:
             fields_str = ",".join(fields)
