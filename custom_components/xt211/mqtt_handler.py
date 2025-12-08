@@ -79,7 +79,7 @@ async def handle_data(hass, payload, config):
                 clean_key = key.replace('.', '_')
                 fields.append(f"{clean_key}={float(value)}")
                 #fields.append(f'"{key}"={float(value)}')
-            if isinstance(value, (string)):
+            if isinstance(value, (str)):
                 # string by mělo být sériové číslo
                 #clean_key = key.replace('.', '_')
                 sn = value
