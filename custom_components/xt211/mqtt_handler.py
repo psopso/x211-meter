@@ -69,7 +69,7 @@ async def handle_data(hass, payload, config):
 
         lines = []
         # 'device=XT211' je tag (indexované)
-        tags = "device=XT211" 
+        tags = "" 
         sn=""
         
         fields = []
@@ -85,7 +85,7 @@ async def handle_data(hass, payload, config):
                 sn = value
 
         # 'device=XT211' je tag (indexované)
-        tags = "device=XT211,"+"meter="+sn
+        tags = "meter="+sn
         
         if fields:
             fields_str = ",".join(fields)
@@ -118,7 +118,7 @@ async def handle_status(hass, payload_str, config):
         return
 
     lines = []
-    tags = "device=XT211"
+    tags = ""
 
     # Statusy posíláme bez timestampu, InfluxDB použije čas přijetí (NOW)
     # Tím zajistíme, že status bude mít čas co nejblíže realitě.
