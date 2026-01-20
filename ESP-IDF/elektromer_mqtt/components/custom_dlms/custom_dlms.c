@@ -13,6 +13,14 @@ void storeOBISToData(dlms_data_t *data, char *obis, char *svalue){
 	const char obis2[] = "1.8.2";
 	const char obis3[] = "1.8.3";
 	const char obis4[] = "1.8.4";
+	const char obis5[] = "96.1.1";
+
+/* ---- STRING OBIS ---- */
+    if (strcmp(obis, obis5) == 0) {
+        strncpy(data->obis_96_1_1, svalue, sizeof(data->obis_96_1_1) - 1);
+        data->obis_96_1_1[sizeof(data->obis_96_1_1) - 1] = '\0';
+        return;
+    }
 
     char *endptr;
     double value = strtod(svalue, &endptr);

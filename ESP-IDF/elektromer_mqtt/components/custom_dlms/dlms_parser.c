@@ -43,7 +43,7 @@ dlms_result_t parse_dlms(const uint8_t *buf, size_t len)
             if (result.count >= DLMS_ITEMS_EXP) break;
 
             dlms_item_t *item = &result.items[result.count];
-            if (buf[i+3] == 0x01)
+            if ((buf[i+3] == 0x01)||(buf[i+3] == 0x60))
               requiredOBIS = true;
             else
               requiredOBIS = false;
@@ -61,7 +61,7 @@ dlms_result_t parse_dlms(const uint8_t *buf, size_t len)
             switch (dtype) {
                 case 0x09: { // Octet string (text)
                     if (pos < len) {
-                        uint8_t slen = buf[pos++];
+                        uint8_t slen = buf[++pos];
                         if (pos + slen <= len && slen < MAX_VALUE_LEN) {
                             memcpy(item->value, buf + pos, slen);
                             item->value[slen] = 0;

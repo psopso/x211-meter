@@ -58,7 +58,7 @@
 #define FRAME_WAIT_TIMEOUT_S    70      // v sekundách (o něco více než 60s)
 #define FRAME_END_TIMEOUT_MS    100
 #define FAILED_FRAME_ATTEMPTS   5
-#define DEEP_SLEEP_OFFSET_S     10      // v sekundách (o kolik dříve se probudit)(900-15=885)
+#define DEEP_SLEEP_OFFSET_S     -3      // v sekundách (o kolik dříve se probudit)(900-15=885)
 
 // --- Application Settings ---
 #define UART_PORT_NUM           UART_NUM_2

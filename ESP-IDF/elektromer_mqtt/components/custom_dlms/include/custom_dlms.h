@@ -11,6 +11,7 @@ typedef struct {
     double obis_1_8_3; // Active energy+ in T3
     double obis_1_8_4; // Active energy+ in T4
     // Zde můžete přidat další OBIS kódy podle potřeby
+    char obis_96_1_1[11];  //serial number
 } dlms_data_t;
 
 /**

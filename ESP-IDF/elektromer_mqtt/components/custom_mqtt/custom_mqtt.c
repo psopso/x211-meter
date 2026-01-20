@@ -65,6 +65,7 @@ void custom_mqtt_send_data(void) {
             cJSON_AddNumberToObject(values, "1.8.2", entry.data.obis_1_8_2);
             cJSON_AddNumberToObject(values, "1.8.3", entry.data.obis_1_8_3);
             cJSON_AddNumberToObject(values, "1.8.4", entry.data.obis_1_8_4);
+			cJSON_AddStringToObject(values, "96.1.1", entry.data.obis_96_1_1);
 
             char *json_string = cJSON_PrintUnformatted(root);
             if (esp_mqtt_client_publish(client, MQTT_DATA_TOPIC, json_string, 0, 1, 0) > 0) successful_sends++; else failed_sends++;
