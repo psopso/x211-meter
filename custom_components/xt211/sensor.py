@@ -23,6 +23,12 @@ from .mqtt_handler import (
         handle_data
 )
 
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorDeviceClass,
+    SensorStateClass,
+)
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -283,6 +289,11 @@ class Xt211ObisSensor(SensorEntity):
         self._state = None
         self._pending_state = None
 
+        # 👇 Energy dashboard compatibility
+        if unit == "kWh":
+            self._attr_device_class = SensorDeviceClass.ENERGY
+            self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+
     async def async_added_to_hass(self):
         if self._pending_state is not None:
             self._state = self._pending_state
@@ -290,6 +301,11 @@ class Xt211ObisSensor(SensorEntity):
             self.async_write_ha_state()
 
     def set_value(self, val):
+        try:
+            val = float(val)
+        except (ValueError, TypeError):
+            return
+
         if self.hass is None:
             self._pending_state = val
         else:
