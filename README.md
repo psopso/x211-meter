@@ -1,6 +1,6 @@
 # XT211 Meter pro Home Assistant
 
-Tato vlastní integrace pro Home Assistant umožňuje sledovat data z elektroměru **XT211** prostřednictvím protokolu **MQTT**. Kromě vytváření senzorů přímo v Home Assistantu dokáže integrace automaticky přeposílat naměřená data do databáze **InfluxDB v2** pro dlouhodobou archivaci a analýzu. Je třeba řešit u druhou stranu na straně elektroměru, která načte data z RS485 s DLMS/COSEM a pošle je pomocí mqtt zprávy do home asistenta.
+Tato vlastní integrace pro Home Assistant umožňuje sledovat data z elektroměru **XT211** prostřednictvím protokolu **MQTT**. Kromě vytváření senzorů přímo v Home Assistantu dokáže integrace automaticky přeposílat naměřená data do databáze **InfluxDB v2** pro dlouhodobou archivaci a analýzu.
 
 ## Hlavní funkce
 
