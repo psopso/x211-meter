@@ -1,7 +1,7 @@
 {
   "domain": "xt211",
   "name": "XT211 Meter",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "documentation": "https://example.com",
   "requirements": [],
   "dependencies": ["mqtt"],
