@@ -54,47 +54,53 @@ Integrace zpracovává JSON zprávy publikované na následujících tématech:
 Tato zpráva nese hlavní data z elektroměru. Integrace automaticky vytvoří senzory pro všechny OBIS kódy nalezené v sekci "values".
 
 Příklad zprávy:
-{
-  "datetime": "Sat Feb 21 20:27:33 2026",
-  "data": {
-    "reading_datetime": "Sat 2026-02-21 20:27:09 GMT",
-	"first_boot":false,    
-    "values": {
-      "1.8.0": 7369.066,
-      "1.8.1": 1338.005,
-      "1.8.2": 6031.06,
-      "1.8.3": 0,
-      "1.8.4": 0,
-      "96.1.1": "5100025085"
+
+    {
+      "datetime": "Sat Feb 21 20:27:33 2026",
+      "data": {
+        "reading_datetime": "Sat 2026-02-21 20:27:09 GMT",
+    	"first_boot":false,    
+        "values": {
+          "1.8.0": 7369.066,
+          "1.8.1": 1338.005,
+          "1.8.2": 6031.06,
+          "1.8.3": 0,
+          "1.8.4": 0,
+          "96.1.1": "5100025085"
+        }
+      }
     }
-  }
-}
 
 #### 2. Stav zařízení a baterie (Topic: elektromer/status)
 Na tomto tématu integrace očekává diagnostické zprávy. Rozlišuje je podle hlavního klíče v JSONu:
 
-A) Systémový status (klíč "Status")
-{
-  "datetime": "Sat Feb 21 20:27:35 2026",
-  "Status": {
-    "Status": "OK",
-    "StatusText": "After wakeup",
-    "Wakeups": 1072,
-    "LastWait": 8,
-    "FirstBootTime": "Tue 2026-02-10 12:07:07 GMT",
-    "BuildDatetime":"2025-12-08 13:05:39",
-    "Wifi": "-77"
-  }
-}
+A) Systémový status (klíč "Status") - příklad zprávy:
 
-B) Stav baterie (klíč "battery")
-{
-  "datetime": "Sat Feb 21 20:27:38 2026",
-  "battery": {
-    "Voltage": 3.783,
-    "SOC": 35.78
-  }
-}
+    {
+      "datetime": "Sat Feb 21 20:27:35 2026",
+      "Status": {
+        "Status": "OK",
+        "StatusText": "After wakeup",
+        "Wakeups": 1072,
+        "LastWait": 8,
+        "FirstBootTime": "Tue 2026-02-10 12:07:07 GMT",
+        "BuildDatetime":"2025-12-08 13:05:39",
+        "Wifi": "-77"
+      }
+    }
+
+B) Stav baterie (klíč "battery") - příklad zprávy:
+
+    {
+      "datetime": "Sat Feb 21 20:27:38 2026",
+      "battery": {
+        "Voltage": 3.783,
+        "SOC": 35.78
+      }
+    }
 
 ---
 **Autor**: [@psopso](https://github.com/psopso)
+
+
+
