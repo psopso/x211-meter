@@ -1,4 +1,4 @@
-[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/psopso/x211-meter/blob/main/README.md) [![cs](https://img.shields.io/badge/lang-cs-yellow.svg)](https://github.com/psopso/x211-meter/blob/main/README.cs.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/psopso/x211-meter/blob/main/README.en.md) [![cs](https://img.shields.io/badge/lang-cs-yellow.svg)](https://github.com/psopso/x211-meter/blob/main/README.md)
 
 # XT211 Meter pro Home Assistant
 
