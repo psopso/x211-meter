@@ -1,3 +1,5 @@
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/psopso/x211-meter/blob/main/README.md) [![cs](https://img.shields.io/badge/lang-cs-yellow.svg)](https://github.com/psopso/x211-meter/blob/main/README.cs.md)
+
 # XT211 Meter pro Home Assistant
 
 Tato vlastní integrace pro Home Assistant umožňuje sledovat data z elektroměru **XT211** prostřednictvím protokolu **MQTT**.  Zprávy posílá modul, který není předmětem tohoto popisu, který je umístěn v elektroměru a čte data z rozhraní RS485 DLMS/COSEM, převádí je na mqtt zprávy a posílá do systému Home asistent.

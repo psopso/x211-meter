@@ -1,3 +1,5 @@
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/psopso/x211-meter/blob/main/README.md) [![cs](https://img.shields.io/badge/lang-cs-yellow.svg)](https://github.com/psopso/x211-meter/blob/main/README.cs.md)
+
 # XT211 Meter for Home Assistant
 
 This custom integration for Home Assistant allows you to monitor data from the **XT211** electricity meter via the **MQTT** protocol. The messages are sent by a module (which is not the subject of this description) located in the electricity meter that reads data from the RS485 DLMS/COSEM interface, converts them to MQTT messages, and sends them to the Home Assistant system.
