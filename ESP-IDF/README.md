@@ -1,6 +1,6 @@
 # Čtečka elektroměru XT211 přes RS485 do MQTT (ESP32)
 
-Tento projekt implementuje energetický uzel postavený na **ESP32**, který v režimu "push" vyčítá data z elektroměru **XT211** a odesílá je na MQTT broker. Je navržen pro maximální efektivitu při provozu na baterie.
+Tento projekt implementuje energetický uzel postavený na **ESP32**, který v režimu "push" vyčítá data z elektroměru **XT211** a odesílá je na MQTT broker. Je navržen s ohledem na maximální efektivitu při provozu na baterie.
 
 ## Klíčové vlastnosti
 
@@ -27,9 +27,9 @@ Program běží v cyklech, které rozlišují mezi "rychlým čtením" a "komuni
    * Čekaní na platný frame (DLMS push zpráva).
    * Označením datem/časem a uložení do vnitřní fronty.
 2. **Komunikace (každou 1 hodinu):**
-   * Aktivace Wi-Fi (výkon omezen na 10-11 dBm pro úspory).
+   * Aktivace Wi-Fi (výkon omezen na 10-11 dBm, jelikož se při testech ukázalo, že vyšší hodnoty způsobují nevysvětlitelné restarty modulu, správnou hodnotu je třeba vyzkoušet).
    * Aktualizace času přes NTP.
-   * Odeslání celé fronty na MQTT (duplicitní odesílání pro zajištění doručení).
+   * Odeslání celé fronty na MQTT (duplicitní odesílání pro zajištění doručení, influxdb si s duplicitou poradí a nic se neztratí).
 3. **Údržba:**
    * Mazání dat z fronty starších než 24 hodin (FIFO).
 
