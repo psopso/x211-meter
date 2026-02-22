@@ -2,7 +2,7 @@
 
 # XT211 Meter pro Home Assistant
 
-Tato vlastní integrace pro Home Assistant umožňuje sledovat data z elektroměru **XT211** prostřednictvím protokolu **MQTT**.  Zprávy posílá modul, který není předmětem tohoto popisu, který je umístěn v elektroměru a čte data z rozhraní RS485 DLMS/COSEM, převádí je na mqtt zprávy a posílá do systému Home asistent.
+Tato vlastní integrace pro Home Assistant umožňuje sledovat data z elektroměru **XT211** prostřednictvím protokolu **MQTT**.  Zprávy posílá modul, který není předmětem tohoto popisu, který je umístěn v elektroměru a čte data z rozhraní RS485 DLMS/COSEM, převádí je na mqtt zprávy a posílá do systému Home asistent. Moji implementaci lze najít zde: https://github.com/psopso/x211-meter/tree/main/ESP-IDF
 Kromě vytváření senzorů přímo v Home Assistantu dokáže integrace automaticky přeposílat naměřená data do databáze **InfluxDB v2** pro dlouhodobou archivaci a analýzu. 
 
 ## Hlavní funkce
