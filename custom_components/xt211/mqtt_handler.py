@@ -95,8 +95,11 @@ async def handle_data(hass, payload, config):
             lines.append(line)
 
         if lines:
-            await _send_to_influx(hass, config, "\n".join(lines))
+            # ---> ZMĚNA: Přidán 'return' <---
+            return await _send_to_influx(hass, config, "\n".join(lines))
 
+        return None # Nebylo co odeslat
+        
     except Exception as e:
         _LOGGER.error(f"Kritická chyba při zpracování dat pro InfluxDB: {e}")
 
@@ -170,7 +173,7 @@ async def _send_to_influx(hass, config, data_payload):
     # Kontrola, zda máme token a základní V2 data
     if not token or not bucket or not org:
          _LOGGER.error("Chybí token, bucket nebo organizace pro InfluxDB V2.")
-         return
+         return  False # ---> ZMĚNA: Vracíme False
 
     # V2 API URL
     url = f"http://{host}:{port}/api/v2/write"
@@ -195,9 +198,11 @@ async def _send_to_influx(hass, config, data_payload):
             if response.status not in (204, 200): # 204 je success, ale 200 může být vrácena s chybou
                 text = await response.text()
                 _LOGGER.error(f"Chyba zápisu do InfluxDB V2 ({response.status}) - Odpověď: {text}")
+                return False # ---> ZMĚNA: Zápis selhal
             else:
                 _LOGGER.debug(f"Data úspěšně odeslána do InfluxDB V2 do bucketu: {bucket}")
+                return True # ---> ZMĚNA: Zápis byl úspěšný
                 
     except aiohttp.ClientError as e:
         _LOGGER.error(f"Nepodařilo se připojit k InfluxDB V2 na adrese http://{host}:{port}: {e}")
-        
+        return False # ---> ZMĚNA: Připojení selhalo
