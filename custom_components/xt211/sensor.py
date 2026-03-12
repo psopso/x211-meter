@@ -341,13 +341,20 @@ class Xt211InfluxStatusSensor(SensorEntity):
         self._attr_device_info = device_info
         self._state = "Unknown"
         self._attr_icon = "mdi:database-check"
+        # 👇 TATO ŘÁDKA JE KLÍČOVÁ - HA díky ní nabídne stavy v menu
+        self._attr_options = ["OK", "Error", "Unknown"]
+        # 👇 Tato řádka řekne HA, že se má chovat jako "výběr z možností"
+        self._attr_device_class = SensorDeviceClass.ENUM
 
     def set_value(self, val):
         self._state = val
         if val == "OK":
             self._attr_icon = "mdi:database-check"
-        else:
+        elif val == "Error":
             self._attr_icon = "mdi:database-remove"
+        else:
+            self._attr_icon = "mdi:database-help"
+            
         if self.hass:
             self.async_write_ha_state()
 
