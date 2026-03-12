@@ -6,6 +6,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from datetime import datetime
 
@@ -63,8 +64,16 @@ async def async_setup_entry(
     wakeups_sensor = Xt211WakeupsSensor(device_info, entry_id)
     rssi_sensor = Xt211RSSISensor(device_info, entry_id)
     waittime_sensor = Xt211WaittimeSensor(device_info, entry_id)
+
+    # ---> NOVÉ SENZORY <---
+    influx_status_sensor = Xt211InfluxStatusSensor(device_info, entry_id)
+    influx_time_sensor = Xt211InfluxLastSuccessSensor(device_info, entry_id)
     
-    entities = [status_sensor, raw_data_sensor, datetime_sensor, battery_sensor, wakeups_sensor, rssi_sensor,waittime_sensor]
+    entities = [
+        status_sensor, raw_data_sensor, datetime_sensor, 
+        battery_sensor, wakeups_sensor, rssi_sensor,waittime_sensor,
+        influx_status_sensor, influx_time_sensor # <--- Přidáno do seznamu
+    ]
     async_add_entities(entities)
 
     # Uložíme si entity do hass.data, abychom k nim měli přístup později
@@ -121,8 +130,16 @@ async def async_setup_entry(
                 # Aktualizujeme seznam entit v hass.data
                 hass.data[DOMAIN][entry.entry_id] = entities
 
-        await handle_data(hass, payload, config)
+        # ---> ZMĚNA: Zpracování výsledku zápisu <---
+        influx_result = await handle_data(hass, payload, config)
 
+        if influx_result is True:
+            influx_status_sensor.set_value("OK")
+            # Použijeme časovou zónu HA pro správné zobrazení
+            influx_time_sensor.set_value(dt_util.now()) 
+        elif influx_result is False:
+            influx_status_sensor.set_value("Error")
+            
 # Examples
 # {"battery":{"Voltage":4.15749979019165,"SOC":96.234375}}
 #  {"Status":{"Status":"OK","StatusText":"After wakeup","Resets":1,"Wakeups":1015}}
@@ -317,10 +334,43 @@ class Xt211ObisSensor(SensorEntity):
         return self._state
 
 
-# --- PLACEHOLDER HANDLERS ---
+class Xt211InfluxStatusSensor(SensorEntity):
+    def __init__(self, device_info, entry_id):
+        self._attr_name = "XT211 InfluxDB Status"
+        self._attr_unique_id = f"{entry_id}_influx_status"
+        self._attr_device_info = device_info
+        self._state = "Unknown"
+        self._attr_icon = "mdi:database-check"
 
-#async def handle_status(msg: str):
-#    pass
+    def set_value(self, val):
+        self._state = val
+        if val == "OK":
+            self._attr_icon = "mdi:database-check"
+        else:
+            self._attr_icon = "mdi:database-remove"
+        if self.hass:
+            self.async_write_ha_state()
 
-#async def handle_data(payload: dict):
-#    pass
+    @property
+    def native_value(self):
+        return self._state
+
+
+class Xt211InfluxLastSuccessSensor(SensorEntity):
+    def __init__(self, device_info, entry_id):
+        self._attr_name = "XT211 InfluxDB Last Success"
+        self._attr_unique_id = f"{entry_id}_influx_last_success"
+        self._attr_device_info = device_info
+        self._state = None
+        # Využijeme vestavěnou třídu pro timestamp, aby to HA uměl hezky formátovat (např. "před 5 minutami")
+        self._attr_device_class = SensorDeviceClass.TIMESTAMP 
+
+    def set_value(self, val):
+        self._state = val
+        if self.hass:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self):
+        return self._state
+        
