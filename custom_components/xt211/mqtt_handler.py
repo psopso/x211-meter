@@ -1,5 +1,8 @@
 import logging
 import aiohttp
+# Přidán import timezone
+from datetime import datetime, timezone 
+
 from datetime import datetime
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
@@ -25,28 +28,32 @@ _LOGGER = logging.getLogger(__name__)
 def _parse_and_convert_time(time_str):
     """
     Parsuje časový řetězec z měřiče a vrací Unix timestamp v nanosekundách.
-    
-    POZNÁMKA: Nahraďte parsování uvnitř bloku 'try' vaší ověřenou logikou,
-    která zvládá lokální nastavení Home Assistanta.
+    Zajišťuje správnou interpretaci GMT/UTC.
     """
     if not time_str:
         return None
+
+
     try:
-        # Příklad implementace (pro standardní formát a odstranění denní zkratky,
-        # pokud to dělá problémy s locale, ale vy byste měli vložit vaši FUNKČNÍ LOGIKU):
-        # Pokud je váš řetězec "Fri 2025-09-19 08:44:03 GMT", a to parsování funguje:
+        # 1. Naparsování řetězce podle formátu
         dt_obj = datetime.strptime(time_str, KNOWN_TIME_FORMAT)
         
-        # Převod na Unix timestamp (sekundy)
-        timestamp_s = int(dt_obj.timestamp())
+        # 2. KLÍČOVÝ KROK: Vynucení UTC (GMT = UTC)
+        # Protože strptime často vrací objekt bez zóny, .replace mu ji vnutí.
+        # Tím zajistíme, že .timestamp() nebude brát čas jako lokální čas serveru.
+        dt_obj = dt_obj.replace(tzinfo=timezone.utc)
         
-        # Převod na nanosekundy (pro maximální přesnost v InfluxDB)
-        timestamp_ns = timestamp_s * 1000000000
+        # 3. Převod na Unix timestamp (sekundy od epochy)
+        # Teď už .timestamp() ví, že dt_obj je v UTC, a neprovede žádný posun.
+        timestamp_s = dt_obj.timestamp()
+        
+        # Převod na nanosekundy
+        timestamp_ns = int(timestamp_s * 1000000000)
         return timestamp_ns
+        
     except ValueError as e:
-        _LOGGER.warning(f"Nepodařilo se parsovat čas '{time_str}'. Zkontrolujte KNOWN_TIME_FORMAT. Chyba: {e}")
+        _LOGGER.warning(f"Nepodařilo se parsovat čas '{time_str}'. Chyba: {e}")
         return None
-
 
 # ----------------------------------------------------------------------
 
