@@ -63,7 +63,8 @@ async def async_setup_entry(
     battery_sensor = Xt211BatterySensor(device_info, entry_id)
     wakeups_sensor = Xt211WakeupsSensor(device_info, entry_id)
     rssi_sensor = Xt211RSSISensor(device_info, entry_id)
-    waittime_sensor = Xt211WaittimeSensor(device_info, entry_id)
+    waittime_sensor_min = Xt211WaittimeSensorMin(device_info, entry_id)
+    waittime_sensor_max = Xt211WaittimeSensorMax(device_info, entry_id)
 
     # ---> NOVÉ SENZORY <---
     influx_status_sensor = Xt211InfluxStatusSensor(device_info, entry_id)
@@ -71,7 +72,7 @@ async def async_setup_entry(
     
     entities = [
         status_sensor, raw_data_sensor, datetime_sensor, 
-        battery_sensor, wakeups_sensor, rssi_sensor,waittime_sensor,
+        battery_sensor, wakeups_sensor, rssi_sensor,waittime_sensor_min,waittime_sensor_max,
         influx_status_sensor, influx_time_sensor # <--- Přidáno do seznamu
     ]
     async_add_entities(entities)
@@ -161,8 +162,10 @@ async def async_setup_entry(
                     wakeups_sensor.set_value(json_data["Status"]["Wakeups"])
                 if json_data["Status"].get("Wifi") != None:
                     rssi_sensor.set_value(json_data["Status"]["Wifi"])
-                if json_data["Status"].get("LastWait") != None:
-                    waittime_sensor.set_value(json_data["Status"]["LastWait"])
+                if json_data["Status"].get("LastWaitMin") != None:
+                    waittime_sensor_min.set_value(json_data["Status"]["LastWaitMin"])
+                if json_data["Status"].get("LastWaitMax") != None:
+                    waittime_sensor_max.set_value(json_data["Status"]["LastWaitMax"])
                 if json_data["Status"].get("Status") != None:
                     status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
@@ -276,10 +279,26 @@ class Xt211RSSISensor(SensorEntity):
     def native_value(self):
         return self._state
 
-class Xt211WaittimeSensor(SensorEntity):
+class Xt211WaittimeSensorMin(SensorEntity):
     def __init__(self, device_info, entry_id):
-        self._attr_name = "XT211 Wait"
-        self._attr_unique_id = f"{entry_id}_wait"
+        self._attr_name = "XT211 Wait min"
+        self._attr_unique_id = f"{entry_id}_wait_min"
+        self._attr_device_info = device_info
+        self._state = None
+
+    def set_value(self, val):
+        self._state = val
+        if self.hass:
+            self.async_write_ha_state()
+
+    @property
+    def native_value(self):
+        return self._state
+
+class Xt211WaittimeSensorMax(SensorEntity):
+    def __init__(self, device_info, entry_id):
+        self._attr_name = "XT211 Wait max"
+        self._attr_unique_id = f"{entry_id}_wait_max"
         self._attr_device_info = device_info
         self._state = None
 
