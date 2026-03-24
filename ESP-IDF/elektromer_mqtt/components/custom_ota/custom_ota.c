@@ -17,6 +17,8 @@ esp_err_t simple_ota_check_and_do_update(const char *url)
     if (client == NULL) {
         ESP_LOGE(TAG, "HTTP client init failed");
         return ESP_FAIL;
+    } else {
+    	ESP_LOGW(TAG, "HTTP URL: %s", url);
     }
 
     esp_err_t err = esp_http_client_open(client, 0);

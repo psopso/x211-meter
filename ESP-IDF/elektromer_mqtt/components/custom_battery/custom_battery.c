@@ -1,4 +1,4 @@
-#ifndef ENV_TEST
+//#ifndef ENV_TEST
 
 #include "custom_battery.h"
 #include "custom_config.h"
@@ -39,6 +39,7 @@ esp_err_t battery_get_status(float *voltage, float *soc) {
 }
 
 void readVoltageandSOC(float *voltage, float *soc) {
+#ifndef ENV_TEST	
    // inicializace I2C
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
@@ -58,15 +59,22 @@ void readVoltageandSOC(float *voltage, float *soc) {
         ESP_LOGI("MAIN", "Battery: %.3f V, %.1f %%", *voltage, *soc);
         ESP_LOGI("MAIN1", "Battery: %f , %f", *voltage, *soc);
     }	
-    
+#else
+  *voltage = 3.7;
+  *soc = 95;    
+#endif    
 }
 
 esp_err_t max17048_write_register(uint8_t reg, uint16_t value)
 {
+#ifndef ENV_TEST	
     uint8_t buf[3] = {reg, (uint8_t)(value >> 8), (uint8_t)(value & 0xFF)};
     return i2c_master_write_to_device(I2C_PORT, MAX17048_DEFAULT_ADDR,
                                       buf, sizeof(buf),
                                       pdMS_TO_TICKS(I2C_TIMEOUT_MS));
+#else
+  return ESP_OK;                                      
+#endif                                      
 }
 
 esp_err_t max17048_read_register(uint8_t reg, uint16_t *value)
@@ -84,6 +92,7 @@ esp_err_t max17048_read_register(uint8_t reg, uint16_t *value)
 
 esp_err_t max17048_init(void)
 {
+#ifndef ENV_TEST	
     // volitelné: QuickStart pro lepší přesnost po startu
     esp_err_t ret = ESP_OK;  //max17048_write_register(0x06, 0x4000);
     if (ret == ESP_OK) {
@@ -92,25 +101,38 @@ esp_err_t max17048_init(void)
         ESP_LOGW(TAG, "MAX17048 init failed: %s", esp_err_to_name(ret));
     }
     return ret;
+#else
+  return ESP_OK;
+#endif    
 }
 
 esp_err_t max17048_get_voltage(float *voltage)
 {
+#ifndef ENV_TEST	
     uint16_t raw;
     esp_err_t ret = max17048_read_register(0x02, &raw);
     if (ret == ESP_OK) {
         *voltage = (raw >> 4) * 1.25f / 1000.0f;  // převod na V
     }
     return ret;
+#else
+  *voltage = 3.7;
+  return ESP_OK;
+#endif    
 }
 
 esp_err_t max17048_get_soc(float *soc)
 {
+#ifndef ENV_TEST	
     uint16_t raw;
     esp_err_t ret = max17048_read_register(0x04, &raw);
     if (ret == ESP_OK) {
         *soc = 1.0f * raw / 256.0f;  // horní bajt = procenta, dolní bajt = 1/256 %
     }
     return ret;
+#else
+  *soc = 95;
+  return ESP_OK;
+#endif    
 }
-#endif
+//#endif

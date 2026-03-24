@@ -34,7 +34,12 @@ esp_err_t custom_wifi_init(const char *ssid, const char *password,
     strncpy(saved_password, password, sizeof(saved_password));
 
     ESP_ERROR_CHECK(nvs_flash_init());
-    wifi_event_group = xEventGroupCreate();
+
+    if (wifi_event_group == NULL) {
+        wifi_event_group = xEventGroupCreate();
+    }
+
+    //wifi_event_group = xEventGroupCreate();
 
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -126,6 +131,9 @@ void custom_wifi_disconnect(void)
 
 bool custom_wifi_is_connected(void)
 {
+    if (wifi_event_group == NULL) {
+        return false; // Grupa neexistuje = nemuzeme byt pripojeni
+    }
     EventBits_t bits = xEventGroupGetBits(wifi_event_group);
     return (bits & WIFI_CONNECTED_BIT) != 0;
 }

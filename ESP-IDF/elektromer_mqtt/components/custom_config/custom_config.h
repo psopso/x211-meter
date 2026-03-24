@@ -43,7 +43,7 @@
 #ifndef ENV_TEST
   #if CONFIG_MY_DEBUG_ENABLED
     #define DEEP_SLEEP_INTERVAL_MIN 5      // v minutách (15*60=900)
-    #define DEEP_SLEEP_INTERVAL_MIN_NTP 5      // v minutách
+    #define DEEP_SLEEP_INTERVAL_MIN_NTP 5  //      // v minutách
   #else
     #define DEEP_SLEEP_INTERVAL_MIN 15      // v minutách (15*60=900)
     #define DEEP_SLEEP_INTERVAL_MIN_NTP 15      // v minutách
@@ -58,7 +58,7 @@
 #define FRAME_WAIT_TIMEOUT_S    70      // v sekundách (o něco více než 60s)
 #define FRAME_END_TIMEOUT_MS    100
 #define FAILED_FRAME_ATTEMPTS   5
-#define DEEP_SLEEP_OFFSET_S     -3      // v sekundách (o kolik dříve se probudit)(900-15=885)
+#define DEEP_SLEEP_OFFSET_S     -5      // v sekundách (o kolik dříve se probudit)(900-15=885)
 
 // --- Application Settings ---
 #define UART_PORT_NUM           UART_NUM_2

@@ -10,8 +10,10 @@ static my_debug_sender_t g_debug_sender = NULL;
 
 char ss[300];
 
+#if CONFIG_MY_DEBUG_ENABLED
 static void bytes_to_hex(char *out, size_t out_size,
                          const uint8_t *data, size_t len);
+#endif
                          
 void my_debug_register_sender(my_debug_sender_t sender_fn)
 {
@@ -85,6 +87,7 @@ void my_debug_log_formatted(const char *tag, const char *format, ...)
     #endif
 }
 
+#if CONFIG_MY_DEBUG_ENABLED
 /// pomocna funkce: prevod pole na hex string
 static void bytes_to_hex(char *out, size_t out_size,
                          const uint8_t *data, size_t len)
@@ -94,3 +97,4 @@ static void bytes_to_hex(char *out, size_t out_size,
         pos += snprintf(out + pos, out_size - pos, "%02x", data[i]);
     }
 }
+#endif

@@ -160,7 +160,10 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
    	        int wakeups = va_arg(args, int);
    	        time_t firstBootTime = va_arg(args, time_t);
    	        int lastWait = va_arg(args, int);
+   	        int lastWaitMin = va_arg(args, int);
+   	        int lastWaitMax = va_arg(args, int);
             int wifiSignal = va_arg(args, int);
+   	        int lastAdaptive = va_arg(args, int);
 
 			char wifiSignalS[10];
 			snprintf(wifiSignalS, sizeof(wifiSignalS), "%d", wifiSignal);			
@@ -177,6 +180,9 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
 		    cJSON_AddNumberToObject(statustype, "Resets", resets);
    			cJSON_AddNumberToObject(statustype, "Wakeups", wakeups);	
    			cJSON_AddNumberToObject(statustype, "LastWait", lastWait);	
+   			cJSON_AddNumberToObject(statustype, "LastWaitMin", lastWaitMin);	
+   			cJSON_AddNumberToObject(statustype, "LastWaitMax", lastWaitMax);	
+   			cJSON_AddNumberToObject(statustype, "LastAdaptive", lastAdaptive);	
    			cJSON_AddStringToObject(statustype, "FirstBootTime", (const char *)&buf);	
    			cJSON_AddStringToObject(statustype, "BuildDatetime", get_build_datetime());	
    			cJSON_AddStringToObject(statustype, "Wifi", wifiSignalS);	

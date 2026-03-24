@@ -33,15 +33,11 @@ RTC_DATA_ATTR int wakeUpCycleCounter = 0;
 RTC_DATA_ATTR int badFrameCounter = 0;
 RTC_DATA_ATTR int mqttWakeUpCycleCounter = 0;
 RTC_DATA_ATTR time_t firstBootTime = 0;
+RTC_DATA_ATTR unsigned char diff = 0;
 RTC_DATA_ATTR int32_t adaptive_offset = 0; 
-RTC_DATA_ATTR unsigned char waitTimeMin = 0;
-RTC_DATA_ATTR unsigned char waitTimeMax = 0;
 
 bool wifiInitialized = false;
-bool resetWaitTime = false;
 
-unsigned char diff = 0;
-int waitTime = 0;
 // Prototypy funkcí
 void ota_update();
 const char *get_build_datetime(void);
@@ -101,7 +97,7 @@ void app_main(void) {
 
     if (first_boot) {
         bootCount += 1;
-        adaptive_offset = 0; //DEEP_SLEEP_OFFSET_S; // Výchozí nastavení z configu
+        adaptive_offset = 0;  //DEEP_SLEEP_OFFSET_S; // Výchozí nastavení z configu
         
         ESP_LOGI(TAG, "Prvni spusteni po restartu.");
         #ifndef CONFIG_MY_DEBUG_ENABLED
@@ -115,7 +111,7 @@ void app_main(void) {
             if (ntp_esp_status == ESP_FAIL) {
                 time(&firstBootTime);
                 signalStrength = check_signal_strength();
-                custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, signalStrength);
+                custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, signalStrength);
                 // Fail-safe spánek při chybě NTP
                 uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
                 esp_sleep_enable_timer_wakeup(sleep_duration_us);
@@ -124,7 +120,7 @@ void app_main(void) {
             }
             time(&firstBootTime);
             signalStrength = check_signal_strength();
-            custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, signalStrength);
+            custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0, signalStrength);
         }
         vTaskDelay(pdMS_TO_TICKS(3000));
         mqttWakeUpCycleCounter += 1;        
@@ -153,9 +149,7 @@ void app_main(void) {
             
             // --- OPRAVENY VYPOCET DIFF (Ošetření NTP skoku) ---
             if (first_boot) {
-                diff = 0;
-                waitTimeMin = 250;
-                waitTimeMax = 0;
+                diff = 0; 
                 ESP_LOGI(TAG, "First boot: diff resetovan na 0 kvuli NTP skoku.");
             } else {
                 double real_diff = difftime(frame_reception_time, startTime);
@@ -163,14 +157,7 @@ void app_main(void) {
                 else if (real_diff > 255) diff = 255;
                 else diff = (unsigned char)real_diff;
             }
-			waitTime = (int)diff;
-            if (((int)diff < 65) & ((int)diff > -65)) {
-            	if (waitTime < waitTimeMin)
-            		waitTimeMin = waitTime;
-            	if (waitTime > waitTimeMax)
-            		waitTimeMax = waitTime;
-			}
-			
+
             dlms_data_t parsed_data;
             if (dlms_parse_frame(buffer, length, &parsed_data) == ESP_OK) {
                 storage_add_to_queue(&parsed_data, frame_reception_time, first_boot);
@@ -178,25 +165,22 @@ void app_main(void) {
                 
                 // --- DYNAMICKA KALIBRACE CASU SPANKU ---
                 if (!first_boot) {
-                    //int target_wait = 5; // Cíl: čekat 5 sekund po probuzení
-                    if (true) {  //(diff <= 40) {
-						//diff, jak dlouho čekal na frame
-						//Sputstil se dříve, to odečteme
-						diff += DEEP_SLEEP_OFFSET_S;  //diff - 3 Tolik by čekal, kdyby se načasoval přesně na minutu
-						int32_t correction = (int32_t)diff;  // - target_wait;
-                        adaptive_offset += correction;  //K původnímu adaptive offset přičtu diif
+                    int target_wait = 5; // Cíl: čekat 5 sekund po probuzení
+                    if (diff <= 40) {
+                        int32_t correction = (int32_t)diff - target_wait;
+                        //adaptive_offset += correction;
                     } else {
                         // Pokud čekáme příliš dlouho, pravděpodobně jsme jeden rámec zmeškali
                         //adaptive_offset -= 10;
                     }
                     
                     // Mantinely pro offset
-                    //int32_t max_offset = DEEP_SLEEP_OFFSET_S + 120;
-                    //int32_t min_offset = DEEP_SLEEP_OFFSET_S - 120;
-                    //if (adaptive_offset > max_offset) adaptive_offset = max_offset;
-                    //if (adaptive_offset < min_offset) adaptive_offset = min_offset;
+                    int32_t max_offset = DEEP_SLEEP_OFFSET_S + 120;
+                    int32_t min_offset = DEEP_SLEEP_OFFSET_S - 120;
+                    if (adaptive_offset > max_offset) adaptive_offset = max_offset;
+                    if (adaptive_offset < min_offset) adaptive_offset = min_offset;
                     
-                    ESP_LOGI(TAG, "Adaptivni offset: %ld s (diff: %d s)(Waittime: %ld s)", (long)adaptive_offset, diff, (long)waitTime);
+                    ESP_LOGI(TAG, "Adaptivni offset: %ld s (diff: %d s)", (long)adaptive_offset, diff);
                 }
             } else {
                 badFrameCounter += 1;
@@ -214,7 +198,7 @@ void app_main(void) {
             ota_update();
             sendBatteryStatus();
             signalStrength = check_signal_strength();
-            custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0,signalStrength);
+            custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, signalStrength);
             uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
             esp_sleep_enable_timer_wakeup(sleep_duration_us);
             gpio_set_level(POWER_ENABLE_GPIO, 0); 
@@ -232,15 +216,13 @@ void app_main(void) {
         custom_mqtt_send_data();
         if (!first_boot) {
             signalStrength = check_signal_strength();
-            custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter, firstBootTime, diff, waitTimeMin, waitTimeMax, signalStrength, adaptive_offset);
+            custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter, firstBootTime, diff, signalStrength, adaptive_offset);
         }
         sendBatteryStatus();
         if (!first_boot) {
             time_sync_from_ntp(); 
         }
-        ota_update();
-        
-        resetWaitTime = true;         
+        ota_update();         
     }
 
     storage_cleanup_old_data();
@@ -259,17 +241,7 @@ void enter_aligned_deep_sleep(void) {
     uint32_t seconds_past_anchor = (uint32_t)now_unix % interval_sec;
     
     int32_t seconds_to_sleep = (int32_t)(interval_sec - seconds_past_anchor);
-    
-    if ((adaptive_offset > 120) | (adaptive_offset < -120))
-      adaptive_offset = 0;
-    
-    if (adaptive_offset > 30)
-      adaptive_offset = adaptive_offset - 60;
-    else
-      if (adaptive_offset < -30)
-        adaptive_offset = adaptive_offset + 60;
-        
-    seconds_to_sleep += adaptive_offset + DEEP_SLEEP_OFFSET_S;
+    seconds_to_sleep += adaptive_offset;
 
     // Pojistky pro délku spánku
     if (seconds_to_sleep < 10) {
@@ -289,13 +261,8 @@ void enter_aligned_deep_sleep(void) {
     localtime_r(&next_wakeup_unix, &next_wakeup_tm);
     strftime(next_wakeup_str, sizeof(next_wakeup_str), "%H:%M:%S", &next_wakeup_tm);
 
-    ESP_LOGI(TAG, "Zarovnavani: UNX %ld, spanek %ld s (offset %ld s)(Waittime: %ld s)(WaittimeMin: %ld s)(WaittimeMax: %ld s)", (long)now_unix, (long)seconds_to_sleep, (long)adaptive_offset, (long)waitTime, (long)waitTimeMin, (long)waitTimeMax);
+    ESP_LOGI(TAG, "Zarovnavani: UNX %ld, spanek %ld s (offset %ld s)", (long)now_unix, (long)seconds_to_sleep, (long)adaptive_offset);
     ESP_LOGI(TAG, "Planovane probuzeni: %s", next_wakeup_str);
-    
-    if (resetWaitTime) {
-		waitTimeMin = 250;
-		waitTimeMax = 0;
-	}
     
     gpio_set_level(POWER_ENABLE_GPIO, 0); 
     esp_sleep_enable_timer_wakeup(sleep_duration_us);
@@ -323,7 +290,7 @@ const char *get_build_datetime(void) {
 void ota_update() {
     esp_err_t err = simple_ota_check_and_do_update(OTA_URL);
     if (err == ESP_OK) {
-        custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, 0);      
+        custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0);      
         vTaskDelay(pdMS_TO_TICKS(5000));
         esp_restart();
     }

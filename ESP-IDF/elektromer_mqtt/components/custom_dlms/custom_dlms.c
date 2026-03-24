@@ -71,7 +71,7 @@ esp_err_t dlms_parse_frame(const uint8_t *buffer, int length, dlms_data_t *data)
 	} dlms_result_t;
 */
 
-    my_debug_log_hex("RS485", buffer);
+        my_debug_log_hex("RS485", buffer);
     
 	dlms_result_t dlmsresult = parse_dlms(buffer, length);
 	snprintf(s, 77, "Delka: %i/%i", length, dlmsresult.count);
