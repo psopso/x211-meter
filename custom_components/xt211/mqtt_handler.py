@@ -113,9 +113,12 @@ async def handle_data(hass, payload, config):
 
 # ----------------------------------------------------------------------
 
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+
 async def handle_status(hass, payload_str, config):
-    return  #Status se neposílá do influxdb2
-    """Zpracování statusu (baterie, atd.) a odeslání do InfluxDB."""
+    """Zpracování statusu a odeslání pouze vybraných hodnot do InfluxDB."""
     host = config.get(CONF_INFLUXDB_HOST)
     if not host:
         return
@@ -124,17 +127,13 @@ async def handle_status(hass, payload_str, config):
     try:
         data = json.loads(payload_str)
     except:
-        _LOGGER.warning("Nebylo možné napařsovat JSON statusu.")
+        _LOGGER.warning("Nebylo možné naparsovat JSON statusu.")
         return
 
     lines = []
-    tags = ""
+    tags = "device=XT211_Status"
 
-    # Statusy posíláme bez timestampu, InfluxDB použije čas přijetí (NOW)
-    # Tím zajistíme, že status bude mít čas co nejblíže realitě.
-
-    # Zpracování baterie
-    '''    
+    # Zpracování baterie (připraveno pro případné budoucí použití)
     if "battery" in data:
         fields = []
         for k, v in data["battery"].items():
@@ -143,26 +142,35 @@ async def handle_status(hass, payload_str, config):
         
         if fields:
             lines.append(f"xt211_status,{tags} {','.join(fields)}")
-    '''
+
     # Zpracování obecného statusu
     if "Status" in data:
         fields = []
+        
+        # 👇 --- TADY JE VÁŠ FILTR (WHITELIST) --- 👇
+        # Všechny klíče, které chcete ukládat, napište SEM malými písmeny.
+        # Příklad s LastWaitMin. Pokud byste chtěl později přidat např. Wakeups,
+        # změníte to na: allowed_numeric_keys = ["lastwaitmin", "wakeups"]
+        allowed_numeric_keys = ["lastwaitmin"] 
+        
         for k, v in data["Status"].items():
+            key_lower = k.lower() # Převedeme na malá písmena pro spolehlivější porovnání
+            
             if isinstance(v, (int, float)):
-                if 1==1:
-                    fields.append(f"status_{k.lower()}={float(v)}")
+                # Zkontroluje, zda je klíč v našem seznamu povolených
+                if key_lower in allowed_numeric_keys:
+                    fields.append(f"status_{key_lower}={float(v)}")
+                    
             elif isinstance(v, str):
-                 # Stringy musí být v uvozovkách (tzv. "quoted string literal")
-                 if (k.lower() == "status") or (k.lower() == "statustext"):
-                    fields.append(f'status_{k.lower()}="{v}"')
+                 # U textových hodnot si zatím necháváme základní stavové zprávy
+                 if key_lower in ["status", "statustext"]:
+                    fields.append(f'status_{key_lower}="{v}"')
         
         if fields:
             lines.append(f"xt211_status,{tags} {','.join(fields)}")
 
     if lines:
         await _send_to_influx(hass, config, "\n".join(lines))
-
-
 # ----------------------------------------------------------------------
 
 async def _send_to_influx(hass, config, data_payload):
