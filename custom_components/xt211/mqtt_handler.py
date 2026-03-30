@@ -134,14 +134,14 @@ async def handle_status(hass, payload_str, config):
     tags = "device=XT211_Status"
 
     # Zpracování baterie (připraveno pro případné budoucí použití)
-    if "battery" in data:
-        fields = []
-        for k, v in data["battery"].items():
-             if isinstance(v, (int, float)):
-                fields.append(f"battery_{k.lower()}={float(v)}")
+    #if "battery" in data:
+    #    fields = []
+    #    for k, v in data["battery"].items():
+    #         if isinstance(v, (int, float)):
+    #            fields.append(f"battery_{k.lower()}={float(v)}")
         
-        if fields:
-            lines.append(f"xt211_status,{tags} {','.join(fields)}")
+    #    if fields:
+    #        lines.append(f"xt211_status,{tags} {','.join(fields)}")
 
     # Zpracování obecného statusu
     if "Status" in data:
