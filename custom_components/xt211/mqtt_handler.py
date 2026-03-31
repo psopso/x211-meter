@@ -24,6 +24,7 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+_LAST_STATUS_VALUES = {}
 
 def _parse_and_convert_time(time_str):
     """
@@ -110,15 +111,10 @@ async def handle_data(hass, payload, config):
     except Exception as e:
         _LOGGER.error(f"Kritická chyba při zpracování dat pro InfluxDB: {e}")
 
-
-# ----------------------------------------------------------------------
-
-# ----------------------------------------------------------------------
-
 # ----------------------------------------------------------------------
 
 async def handle_status(hass, payload_str, config):
-    """Zpracování statusu a odeslání pouze vybraných hodnot do InfluxDB."""
+    """Zpracování statusu a odeslání pouze ZMĚN vybraných hodnot do InfluxDB."""
     host = config.get(CONF_INFLUXDB_HOST)
     if not host:
         return
@@ -132,46 +128,46 @@ async def handle_status(hass, payload_str, config):
 
     lines = []
     tags = "device=XT211_Status"
+    fields = []
 
     # Zpracování baterie (připraveno pro případné budoucí použití)
-    #if "battery" in data:
-    #    fields = []
-    #    for k, v in data["battery"].items():
-    #         if isinstance(v, (int, float)):
-    #            fields.append(f"battery_{k.lower()}={float(v)}")
-        
-    #    if fields:
-    #        lines.append(f"xt211_status,{tags} {','.join(fields)}")
+    if "battery" in data:
+        for k, v in data["battery"].items():
+             if isinstance(v, (int, float)):
+                field_key = f"battery_{k.lower()}"
+                # 👇 Zkontrolujeme, zda se hodnota změnila
+                if _LAST_STATUS_VALUES.get(field_key) != float(v):
+                    fields.append(f"{field_key}={float(v)}")
+                    _LAST_STATUS_VALUES[field_key] = float(v) # Uložíme si novou hodnotu
 
     # Zpracování obecného statusu
     if "Status" in data:
-        fields = []
-        
-        # 👇 --- TADY JE VÁŠ FILTR (WHITELIST) --- 👇
-        # Všechny klíče, které chcete ukládat, napište SEM malými písmeny.
-        # Příklad s LastWaitMin. Pokud byste chtěl později přidat např. Wakeups,
-        # změníte to na: allowed_numeric_keys = ["lastwaitmin", "wakeups"]
+        # Váš whitelist
         allowed_numeric_keys = ["lastwaitmin"] 
         
         for k, v in data["Status"].items():
-            key_lower = k.lower() # Převedeme na malá písmena pro spolehlivější porovnání
+            key_lower = k.lower()
             
             if isinstance(v, (int, float)):
-                # Zkontroluje, zda je klíč v našem seznamu povolených
                 if key_lower in allowed_numeric_keys:
-                    fields.append(f"status_{key_lower}={float(v)}")
+                    field_key = f"status_{key_lower}"
+                    # 👇 Zkontrolujeme, zda se číselná hodnota změnila
+                    if _LAST_STATUS_VALUES.get(field_key) != float(v):
+                        fields.append(f"{field_key}={float(v)}")
+                        _LAST_STATUS_VALUES[field_key] = float(v)
                     
             elif isinstance(v, str):
-                 # U textových hodnot si zatím necháváme základní stavové zprávy
                  if key_lower in ["status", "statustext"]:
-                    fields.append(f'status_{key_lower}="{v}"')
-        
-        if fields:
-            lines.append(f"xt211_status,{tags} {','.join(fields)}")
+                    field_key = f"status_{key_lower}"
+                    # 👇 Zkontrolujeme, zda se textová hodnota změnila
+                    if _LAST_STATUS_VALUES.get(field_key) != v:
+                        fields.append(f'{field_key}="{v}"')
+                        _LAST_STATUS_VALUES[field_key] = v
 
-    if lines:
+    # Odesíláme do InfluxDB POUZE tehdy, pokud se do 'fields' něco přidalo (tj. nastala změna)
+    if fields:
+        lines.append(f"xt211_status,{tags} {','.join(fields)}")
         await _send_to_influx(hass, config, "\n".join(lines))
-# ----------------------------------------------------------------------
 
 async def _send_to_influx(hass, config, data_payload):
     """Pomocná funkce pro asynchronní HTTP POST do InfluxDB V2 API."""
