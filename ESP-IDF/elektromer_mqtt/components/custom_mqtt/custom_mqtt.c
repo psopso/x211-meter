@@ -81,42 +81,6 @@ void custom_mqtt_send_data(void) {
     ESP_LOGI(TAG, "MQTT disconnected.");
 }
 
-void custom_mqtt_send_status_old(float voltage, float soc) {
-    // TODO: Implementace stavové zprávy - velmi podobná send_data,
-    // ale vytvoří jiný JSON a pošle na MQTT_STATUS_TOPIC
-    ESP_LOGI(TAG, "Sending status message... (Voltage: %.2fV, SoC: %.1f%%)", voltage, soc);
-
-    esp_mqtt_client_config_t mqtt_cfg = {
-        .broker.address.uri = MQTT_BROKER_URI,
-        .credentials.username = MQTT_USERNAME,
-        .credentials.authentication.password = MQTT_PASSWORD,
-    };
-    client = esp_mqtt_client_init(&mqtt_cfg);
-    esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
-    esp_mqtt_client_start(client);
-    vTaskDelay(pdMS_TO_TICKS(2000));
-
-    successful_sends = 0; failed_sends = 0;
-
-    cJSON *root = cJSON_CreateObject();
-	cJSON *battery = cJSON_CreateObject();
-	cJSON_AddItemToObject(root, "battery", battery);    
-    
-    cJSON_AddNumberToObject(battery, "Voltage", voltage);
-    cJSON_AddNumberToObject(battery, "SOC", soc);
-
-    char *json_string = cJSON_PrintUnformatted(root);
-    if (esp_mqtt_client_publish(client, MQTT_STATUS_TOPIC, json_string, 0, 1, 0) > 0) successful_sends++; else failed_sends++;
-    cJSON_Delete(root);
-    free(json_string);
-    vTaskDelay(pdMS_TO_TICKS(100));
-    
-    ESP_LOGI(TAG, "Data sending finished. Success: %d, Failed: %d", successful_sends, failed_sends);
-
-    esp_mqtt_client_stop(client);
-    esp_mqtt_client_destroy(client);
-}
-
 void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
 	va_list args;
     va_start(args, mqtt_type);
@@ -164,14 +128,20 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
    	        int lastWaitMax = va_arg(args, int);
             int wifiSignal = va_arg(args, int);
    	        int lastAdaptive = va_arg(args, int);
-
+   	        char * startTime = va_arg(args, char *);
+   	        char * nextStartTime = va_arg(args, char *);
+			double drift = va_arg(args, double);
+			
 			char wifiSignalS[10];
 			snprintf(wifiSignalS, sizeof(wifiSignalS), "%d", wifiSignal);			
 			
 			char buf[80];
+			char buf1[40];
 			struct tm  ts;
 		    ts = *localtime(&firstBootTime);
     		strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
+   	        
+   	        snprintf(buf1, sizeof(buf1), "%.2f", drift);
    	        
             cJSON_AddStringToObject(root, "datetime", getCurrentDatetime());
 			cJSON_AddItemToObject(root, "Status", statustype);    
@@ -185,7 +155,43 @@ void custom_mqtt_send_status(mqtt_type_t mqtt_type, ...) {
    			cJSON_AddNumberToObject(statustype, "LastAdaptive", lastAdaptive);	
    			cJSON_AddStringToObject(statustype, "FirstBootTime", (const char *)&buf);	
    			cJSON_AddStringToObject(statustype, "BuildDatetime", get_build_datetime());	
-   			cJSON_AddStringToObject(statustype, "Wifi", wifiSignalS);	
+   			cJSON_AddStringToObject(statustype, "Wifi", wifiSignalS);
+   			cJSON_AddStringToObject(statustype, "NTPDrift", buf1);
+   			//Debug
+
+   			if (nextStartTime) {
+//				   ESP_LOGI(TAG, "DEBUG: laststarttime is not NULL");
+				   if (nextStartTime[0] != '\0') {
+//					   ESP_LOGI(TAG, "DEBUG: laststarttime is not \\0");
+//					   ESP_LOGI(TAG, "DEBUG string: %s", lastStartTime);
+					   cJSON_AddStringToObject(statustype, "PlannedStartTime", nextStartTime);
+				   } else {
+//					   ESP_LOGI(TAG, "DEBUG: laststarttime is \\0");
+				   }
+			}
+
+   			if (startTime) {
+//				   ESP_LOGI(TAG, "DEBUG: starttime is not NULL");
+				   if (startTime[0] != '\0') {
+//					   ESP_LOGI(TAG, "DEBUG: starttime is not \\0");
+//					   ESP_LOGI(TAG, "DEBUG string: %s", startTime);
+					   cJSON_AddStringToObject(statustype, "RealStartTime", startTime);
+				   } else {
+//					   ESP_LOGI(TAG, "DEBUG: starttime is \\0");
+				   }
+			}
+
+   			//
+//			if (startTime) {
+//				if (startTime[0] != '\0')
+//					cJSON_AddStringToObject(statustype, "StartTime", startTime);
+//    		}
+    		
+//			if (lastStartTime[0] != '\0')    			
+//   				cJSON_AddStringToObject(statustype, "LastStartTime", lastStartTime);
+//			else
+//    			cJSON_AddNullToObject(statustype, "LastStartTime");	
+   					
    			json_string = strdup(cJSON_PrintUnformatted(root));		
 			break;
 		}

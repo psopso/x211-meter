@@ -1,17 +1,13 @@
-// ==============================================================================
-// KNIHOVNY A ZÁVISLOSTI
-// ==============================================================================
 #include <iso646.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 #include <sys/time.h>
-
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "esp_timer.h"
 #include "esp_err.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_log.h"
 #include "esp_sleep.h"
 #include "driver/gpio.h"
@@ -29,12 +25,9 @@
 #include "custom_ota.h"
 #include "my_debug.h"
 
-// ==============================================================================
-// GLOBÁLNÍ PROMĚNNÉ A KONSTANTY
-// ==============================================================================
 static const char *TAG = "MAIN";
 
-// --- RTC paměť (uchovává data mezi hlubokými spánky) ---
+// RTC paměť pro uchování dat mezi spánky
 RTC_DATA_ATTR int bootCount = 0;
 RTC_DATA_ATTR int wakeUpCycleCounter = 0;
 RTC_DATA_ATTR int badFrameCounter = 0;
@@ -44,19 +37,17 @@ RTC_DATA_ATTR int32_t adaptive_offset = 0;
 RTC_DATA_ATTR unsigned char waitTimeMin = 0;
 RTC_DATA_ATTR unsigned char waitTimeMax = 0;
 RTC_DATA_ATTR char next_wakeup_str_pers[64] = {0};
-RTC_DATA_ATTR int64_t last_planned_wakeup_usec = 0;
+RTC_DATA_ATTR int64_t last_planned_wakeup_usec = 0; // Přesný časový plán v mikrosekundách
 
-// --- Běžné proměnné (nulují se při každém startu) ---
 bool wifiInitialized = false;
 bool resetWaitTime = false;
+
 unsigned char diff = 0;
 int waitTime = 0;
 double drift = 0;
 double network_delay_sec = 0;
 
-// ==============================================================================
-// PROTOTYPY FUNKCÍ
-// ==============================================================================
+// Prototypy funkcí
 void ota_update();
 const char *get_build_datetime(void);
 void sendBatteryStatus();
@@ -65,17 +56,7 @@ void formatDatetime(time_t frametime, char *s);
 void formatDatetimeShort(time_t frametime, char *s);
 void time_sync_from_ntp_with_drift(bool first_boot, double *drift, double *network_delay_sec);
 
-// ==============================================================================
-// HLAVNÍ BĚH PROGRAMU
-// ==============================================================================
 void app_main(void) {
-	// 0. Inicializace detekce USB kabelu
-    gpio_reset_pin(USB_SENSE_PIN);
-    gpio_set_direction(USB_SENSE_PIN, GPIO_MODE_INPUT);
-    // Hardwarový pulldown už dělá spodní rezistor děliče, ale jistota je jistota:
-    gpio_pulldown_en(USB_SENSE_PIN);
-    
-    
     // --- 1. OKAMŽITÝ ODBĚR ČASU PŘI STARTU ---
     struct timeval tv_start;
     gettimeofday(&tv_start, NULL);
@@ -88,10 +69,10 @@ void app_main(void) {
         ota_update();
     #endif
 
-    // --- 2. VÝPIS STATISTIKY PROBUZENÍ ---
     char s_now[64] = {0};
     formatDatetime(startTime, s_now);
 
+    // --- 2. VÝPIS STATISTIKY PROBUZENÍ ---
     ESP_LOGI(TAG, "================ START STATISTIKA ================");
     ESP_LOGI(TAG, "Aktualni cas startu: %s (UNIX: %lld.%06d)", s_now, (long long)tv_start.tv_sec, (int)tv_start.tv_usec);
     
@@ -106,7 +87,7 @@ void app_main(void) {
     ESP_LOGI(TAG, "Firmware build UTC: %s", get_build_datetime());
     ESP_LOGI(TAG, "==================================================");
 
-    // --- 3. HARDWAROVÁ INICIALIZACE ---
+    // Inicializace NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
@@ -114,21 +95,19 @@ void app_main(void) {
     }
     ESP_ERROR_CHECK(ret);
 
-    #ifndef ENV_TEST
-        gpio_set_direction(POWER_ENABLE_GPIO, GPIO_MODE_OUTPUT);
-        gpio_set_level(POWER_ENABLE_GPIO, 1);
-        gpio_set_direction(RS485_ENABLE_RX, GPIO_MODE_OUTPUT);
-        gpio_set_level(RS485_ENABLE_RX, 0);
-    #endif
+#ifndef ENV_TEST
+    gpio_set_direction(POWER_ENABLE_GPIO, GPIO_MODE_OUTPUT);
+    gpio_set_level(POWER_ENABLE_GPIO, 1);
+    gpio_set_direction(RS485_ENABLE_RX, GPIO_MODE_OUTPUT);
+    gpio_set_level(RS485_ENABLE_RX, 0);
+#endif
 
     vTaskDelay(pdMS_TO_TICKS(500)); 
     storage_init();
-    
     #ifndef ENV_TEST
-        battery_init();
+    battery_init();
     #endif
 
-    // --- 4. IDENTIFIKACE TYPU STARTU (First Boot vs Wakeup) ---
     esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
     bool first_boot = (wakeup_reason == ESP_SLEEP_WAKEUP_UNDEFINED);
     
@@ -139,11 +118,9 @@ void app_main(void) {
         bootCount++;
         adaptive_offset = 0;
         ESP_LOGI(TAG, "Prvni spusteni po restartu.");
-        
         #ifndef CONFIG_MY_DEBUG_ENABLED
-            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+        custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
         #endif
-        
         if (custom_wifi_is_connected()) {
             wifiInitialized = true;
             ota_update();
@@ -164,7 +141,6 @@ void app_main(void) {
         mqttWakeUpCycleCounter++;
     }
 
-    // --- 5. KOMUNIKACE RS485 A ZPRACOVÁNÍ DAT ---
     rs485_init();
     uint8_t buffer[UART_BUFFER_SIZE];
     time_t frame_reception_time;
@@ -172,7 +148,6 @@ void app_main(void) {
 
     while (!rs485completed) {    
         int length = rs485_read_frame(buffer, UART_BUFFER_SIZE, &frame_reception_time);
-        
         if (length > 0) {
             if (first_boot) {
                 diff = 0;
@@ -182,7 +157,6 @@ void app_main(void) {
                 double real_diff = difftime(frame_reception_time, startTime);
                 diff = (real_diff < 0) ? 0 : (real_diff > 255 ? 255 : (unsigned char)real_diff);
             }
-            
             waitTime = (int)diff;
             if (waitTime < 65) {
                 if (waitTime < waitTimeMin) waitTimeMin = waitTime;
@@ -193,7 +167,6 @@ void app_main(void) {
             if (dlms_parse_frame(buffer, length, &parsed_data) == ESP_OK) {
                 storage_add_to_queue(&parsed_data, frame_reception_time, first_boot);
                 rs485completed = true;
-                
                 if (!first_boot) {
                     diff += DEEP_SLEEP_OFFSET_S; 
                     adaptive_offset += (int32_t)diff;
@@ -206,7 +179,6 @@ void app_main(void) {
             badFrameCounter++;
         }
 
-        // Záchranný mechanismus při selhání RS485
         if (!rs485completed && badFrameCounter > RS485_BAD_FRAMES_MAX) {
             if (!custom_wifi_is_connected()) custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
             vTaskDelay(pdMS_TO_TICKS(5000));
@@ -219,16 +191,12 @@ void app_main(void) {
         }
     }
     
-    // --- 6. ODESLÁNÍ DAT (MQTT & SYNC) ---
     if (first_boot || (mqttWakeUpCycleCounter >= 4)) {
         mqttWakeUpCycleCounter = 0;
-        
-        if (!custom_wifi_is_connected()) {
-            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
-        }
+        if (!custom_wifi_is_connected()) custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
         vTaskDelay(pdMS_TO_TICKS(2000));
-        
         custom_mqtt_send_data();
+        
         time_sync_from_ntp_with_drift(first_boot, &drift, &network_delay_sec);
         
         if (!first_boot) {
@@ -236,20 +204,16 @@ void app_main(void) {
             formatDatetimeShort(startTime, s_short);
             custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter, firstBootTime, waitTime, waitTimeMin, waitTimeMax, check_signal_strength(), adaptive_offset, s_short, next_wakeup_str_pers, drift);
         }
-        
         sendBatteryStatus();
         ota_update();
         resetWaitTime = true;         
     }
 
-    // --- 7. ÚKLID A SPÁNEK ---
     storage_cleanup_old_data();
     enter_aligned_deep_sleep();
 }
 
-// ==============================================================================
-// POMOCNÉ FUNKCE
-// ==============================================================================
+// --- POMOCNÉ FUNKCE ---
 
 void enter_aligned_deep_sleep(void) {
     struct timeval tv_now;
@@ -266,7 +230,7 @@ void enter_aligned_deep_sleep(void) {
     int32_t final_offset = adaptive_offset;
     if (final_offset > 30) final_offset -= 60;
     else if (final_offset < -30) final_offset += 60;
-    adaptive_offset = final_offset;  // Vrátíme přepočet adaptive offsetu
+    adaptive_offset = final_offset;  //Vrátíme přepočet adaptive offsetu
     
     usec_to_sleep += (int64_t)(final_offset + DEEP_SLEEP_OFFSET_S) * 1000000LL;
 
@@ -282,7 +246,7 @@ void enter_aligned_deep_sleep(void) {
     localtime_r(&next_wakeup_sec, &next_wakeup_tm);
     strftime(next_wakeup_str_pers, sizeof(next_wakeup_str_pers), "%H:%M:%S", &next_wakeup_tm);
 
-    time_t now_unix = tv_now.tv_sec;
+	time_t now_unix = tv_now.tv_sec;
     struct tm now_tm;
     char now_str[64];
     localtime_r(&now_unix, &now_tm);
@@ -290,9 +254,12 @@ void enter_aligned_deep_sleep(void) {
     
     ESP_LOGI(TAG, "==========================================");
     ESP_LOGI(TAG, "1. Aktualni cas:   %s (UNIX: %lld.%06d)", now_str, (long long)tv_now.tv_sec, (int)tv_now.tv_usec);    
-    ESP_LOGI(TAG, "2. Doba spanku:    %.3f sekund", (double)usec_to_sleep / 1000000.0);
-    ESP_LOGI(TAG, "3. Plan probuzeni: %s (UNIX: %lld.%06lld)", next_wakeup_str_pers, (long long)next_wakeup_sec, last_planned_wakeup_usec % 1000000LL);
-    SMART_LOGI(TAG, "==========================================");
+	ESP_LOGI(TAG, "2. Doba spanku:    %.3f sekund", (double)usec_to_sleep / 1000000.0);
+	ESP_LOGI(TAG, "3. Plan probuzeni: %s (UNIX: %lld.%06lld)", next_wakeup_str_pers, (long long)next_wakeup_sec, last_planned_wakeup_usec % 1000000LL);
+    ESP_LOGI(TAG, "==========================================");
+
+
+//    ESP_LOGI(TAG, "Planuji spanek: %.3f s, Probuzeni: %s", (double)usec_to_sleep/1000000.0, next_wakeup_str_pers);
     
     if (resetWaitTime) {
         waitTimeMin = 250;

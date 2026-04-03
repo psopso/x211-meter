@@ -58,7 +58,7 @@
 #define FRAME_WAIT_TIMEOUT_S    70      // v sekundách (o něco více než 60s)
 #define FRAME_END_TIMEOUT_MS    100
 #define FAILED_FRAME_ATTEMPTS   5
-#define DEEP_SLEEP_OFFSET_S     -5      // v sekundách (o kolik dříve se probudit)(900-15=885)
+#define DEEP_SLEEP_OFFSET_S     3  //-5      // v sekundách (o kolik dříve se probudit)(900-15=885)
 
 // --- Application Settings ---
 #define UART_PORT_NUM           UART_NUM_2
@@ -67,8 +67,19 @@
 #define QUEUE_SIZE              100 // (60 min / 15 min) * 24 hours = 96
 #define UART_RX_TIMEOUT_MS      20
 
+// Zvolte pin, na který připojíte střed děliče 5V -> 3.3V
+#define USB_SENSE_PIN 			GPIO_NUM_4
 // --- Optional FRAM ---
 // #define USE_FRAM_MEMORY
 
 extern bool wifiInitialized;
 extern void formatDatetime(time_t frametime, char *s);
+
+// Makro, které nahradí ESP_LOGI. 
+// Text se formátuje a vypisuje JEN tehdy, když je na pinu logická 1 (připojeno USB).
+#define SMART_LOGI(tag, format, ...) \
+    do { \
+        if (gpio_get_level(USB_SENSE_PIN) == 1) { \
+            ESP_LOGI(tag, format, ##__VA_ARGS__); \
+        } \
+    } while(0)

@@ -30,6 +30,7 @@ idf_component_register(
       nvs_flash
       
     PRIV_REQUIRES       # optional, list the private requirements
+      esp_timer
 )
 
 # PĹ?edej jako compile-time definici (musĂ­ bĂ˝t v uvozovkĂĄch)
