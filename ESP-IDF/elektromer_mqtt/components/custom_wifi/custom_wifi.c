@@ -197,7 +197,7 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
 // ... v nějakém tasku nebo funkci:
 
-int8_t check_signal_strength(void)
+int8_t check_wifi_signal_strength(void)
 {
     int8_t current_rssi = 0;
     esp_err_t ret = custom_wifi_get_rssi(&current_rssi);

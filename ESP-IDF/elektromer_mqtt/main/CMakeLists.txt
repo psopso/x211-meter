@@ -24,6 +24,7 @@ idf_component_register(
       custom_battery
       custom_ota
       custom_wifi
+      custom_comm
       custom_led
       my_debug
       driver

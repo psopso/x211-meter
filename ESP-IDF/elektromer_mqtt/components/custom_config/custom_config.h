@@ -6,12 +6,13 @@
 #include <time.h>
 // --- GPIO Configuration ---
 #define POWER_ENABLE_GPIO       2
-#define RS485_TXD_PIN           17
-#define RS485_RXD_PIN           16
+#define RS485_TXD_PIN           CONFIG_RS485_TXD_PIN   //GPIO17
+#define RS485_RXD_PIN           CONFIG_RS485_RXD_PIN   //GPIO16
 #define RS485_RTS_PIN           (-1) // Not used for push mode
-#define I2C_SDA_PIN             21
-#define I2C_SCL_PIN             22
-#define RS485_ENABLE_RX			32
+#define I2C_SDA_PIN             CONFIG_I2C_SDA_PIN
+#define I2C_SCL_PIN             CONFIG_I2C_SCL_PIN
+#define RS485_ENABLE_RX_PIN	    CONFIG_RS485_ENABLE_RX_PIN
+
 #define RS485_BAD_FRAMES_MAX	3
 
 // --- Wi-Fi & MQTT Configuration ---
@@ -20,6 +21,8 @@
 #define WIFI_IP					CONFIG_ESP_WIFI_IP
 #define WIFI_GW					CONFIG_ESP_WIFI_GW
 #define WIFI_NETMASK			CONFIG_ESP_WIFI_NETMASK
+
+#define IDF_TARGET				CONFIG_IDF_TARGET
 
 #ifdef ENV_HOME
 
@@ -77,9 +80,12 @@ extern void formatDatetime(time_t frametime, char *s);
 
 // Makro, které nahradí ESP_LOGI. 
 // Text se formátuje a vypisuje JEN tehdy, když je na pinu logická 1 (připojeno USB).
+
 #define SMART_LOGI(tag, format, ...) \
     do { \
         if (gpio_get_level(USB_SENSE_PIN) == 1) { \
             ESP_LOGI(tag, format, ##__VA_ARGS__); \
         } \
     } while(0)
+
+

@@ -68,6 +68,34 @@ config OTA_URL
 
 endmenu
 
+menu "My GPIO Configuration"
+config RS485_TXD_PIN
+    int "RS485 TX pin"
+    default 0
+    help
+	tx pin
+config RS485_RXD_PIN
+    int "RS485 RX pin"
+    default 0
+    help
+	RX pin
+config I2C_SDA_PIN
+    int "I2C_SDA_PIN"
+    default 0
+    help
+	I2C SDA
+config I2C_SCL_PIN
+    int "I2C_SCL_PIN"
+    default 0
+    help
+	I2C SDA
+config RS485_ENABLE_RX_PIN
+    int "RS485_ENABLE_RX_PIN"
+    default 0
+    help
+	RS485 ENABLE RX
+endmenu
+
 menu "My Debugging Options"
 
     config MY_DEBUG_ENABLED

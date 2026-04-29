@@ -23,7 +23,7 @@ void storage_init(void) {
     }
 }
 
-void storage_add_to_queue(const dlms_data_t *data, time_t timestamp, bool is_first_boot) {
+void storage_add_to_queue(const dlms_data_t *data, time_t timestamp, bool is_first_boot, int waittime) {
     if (queue_count >= QUEUE_SIZE) {
         // Fronta je plná, přepíšeme nejstarší záznam
         ESP_LOGW(TAG, "Queue is full. Overwriting the oldest entry.");
@@ -34,6 +34,7 @@ void storage_add_to_queue(const dlms_data_t *data, time_t timestamp, bool is_fir
     data_queue[queue_head].data = *data;
     data_queue[queue_head].timestamp = timestamp;
     data_queue[queue_head].first_after_restart = is_first_boot;
+    data_queue[queue_head].waittime = waittime;
     queue_head = (queue_head + 1) % QUEUE_SIZE;
     queue_count++;
     ESP_LOGI(TAG, "Data added to queue. : %d", queue_count);
@@ -66,4 +67,33 @@ bool storage_get_queue_entry(int index, data_queue_entry_t *entry) {
     int internal_index = (queue_tail + index) % QUEUE_SIZE;
     *entry = data_queue[internal_index];
     return true;
+}
+
+/**
+ * Odstraní prvních n nejstarších záznamů z fronty.
+ * Používá se po úspěšném potvrzení přijetí balíčku LoRa bránou.
+ */
+void storage_remove_entries(int n) {
+    if (n <= 0) {
+        return;
+    }
+
+    // Pokud bychom chtěli smazat víc, než máme, smažeme prostě všechno
+    if (n > queue_count) {
+        n = queue_count;
+    }
+
+    // Posuneme tail (konec fronty) o n pozic dopředu s ohledem na modulo
+    queue_tail = (queue_tail + n) % QUEUE_SIZE;
+    
+    // Snížíme celkový počet prvků ve frontě
+    queue_count -= n;
+
+    ESP_LOGI(TAG, "Removed %d entries from queue. Remaining: %d", n, queue_count);
+
+    // Pokud je fronta prázdná, pro jistotu srovnáme head a tail (kosmetická úprava)
+    if (queue_count == 0) {
+        queue_head = 0;
+        queue_tail = 0;
+    }
 }

@@ -18,4 +18,4 @@ bool custom_wifi_is_connected(void);
 
 esp_err_t custom_wifi_get_rssi(int8_t *rssi_out);
 
-int8_t check_signal_strength(void);
+int8_t check_wifi_signal_strength(void);

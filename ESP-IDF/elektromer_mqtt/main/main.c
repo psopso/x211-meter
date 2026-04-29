@@ -18,15 +18,16 @@
 #include "nvs_flash.h"
 
 #include "custom_config.h"
-#include "custom_time.h"
 #include "custom_rs485.h"
 #include "custom_dlms.h"
 #include "custom_storage.h"
-#include "custom_mqtt.h"
+#include "custom_comm.h"
 #include "custom_battery.h"
 #include "custom_led.h"
-#include "custom_wifi.h"
+//#include "custom_wifi.h"
 #include "custom_ota.h"
+#include "custom_time.h"
+
 #include "my_debug.h"
 
 // ==============================================================================
@@ -47,6 +48,7 @@ RTC_DATA_ATTR char next_wakeup_str_pers[64] = {0};
 RTC_DATA_ATTR int64_t last_planned_wakeup_usec = 0;
 
 // --- Běžné proměnné (nulují se při každém startu) ---
+bool forceOTA = false;
 bool wifiInitialized = false;
 bool resetWaitTime = false;
 unsigned char diff = 0;
@@ -57,14 +59,15 @@ double network_delay_sec = 0;
 // ==============================================================================
 // PROTOTYPY FUNKCÍ
 // ==============================================================================
-void ota_update();
 const char *get_build_datetime(void);
 void sendBatteryStatus();
 void enter_aligned_deep_sleep(void);
 void formatDatetime(time_t frametime, char *s);
 void formatDatetimeShort(time_t frametime, char *s);
 void time_sync_from_ntp_with_drift(bool first_boot, double *drift, double *network_delay_sec);
+void ota_update(time_t startTime, bool first_boot);
 
+void send_data(const char *status, const char *reason, time_t startTime, bool first_boot, bool status_only);
 // ==============================================================================
 // HLAVNÍ BĚH PROGRAMU
 // ==============================================================================
@@ -83,9 +86,10 @@ void app_main(void) {
 
     #if CONFIG_MY_DEBUG_ENABLED
         my_debug_register_sender(mqtt_send_debug);
-        custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+//        custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+	comm_init();
         vTaskDelay(pdMS_TO_TICKS(3000));
-        ota_update();
+        ota_update(startTime, first_boot);
     #endif
 
     // --- 2. VÝPIS STATISTIKY PROBUZENÍ ---
@@ -104,6 +108,7 @@ void app_main(void) {
         ESP_LOGI(TAG, "Posledni plan startu: N/A (Prvni boot)");
     }
     ESP_LOGI(TAG, "Firmware build UTC: %s", get_build_datetime());
+//	ESP_LOGI(TAG, "Target: %s", IDF_TARGET)
     ESP_LOGI(TAG, "==================================================");
 
     // --- 3. HARDWAROVÁ INICIALIZACE ---
@@ -117,8 +122,8 @@ void app_main(void) {
     #ifndef ENV_TEST
         gpio_set_direction(POWER_ENABLE_GPIO, GPIO_MODE_OUTPUT);
         gpio_set_level(POWER_ENABLE_GPIO, 1);
-        gpio_set_direction(RS485_ENABLE_RX, GPIO_MODE_OUTPUT);
-        gpio_set_level(RS485_ENABLE_RX, 0);
+        gpio_set_direction(RS485_ENABLE_RX_PIN, GPIO_MODE_OUTPUT);
+        gpio_set_level(RS485_ENABLE_RX_PIN, 0);
     #endif
 
     vTaskDelay(pdMS_TO_TICKS(500)); 
@@ -136,26 +141,31 @@ void app_main(void) {
     else switchLED(true, 0, 0, 5);
 
     if (first_boot) {
+		forceOTA = true;
         bootCount++;
         adaptive_offset = 0;
         ESP_LOGI(TAG, "Prvni spusteni po restartu.");
         
         #ifndef CONFIG_MY_DEBUG_ENABLED
-            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+//            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+	      comm_init();
         #endif
         
-        if (custom_wifi_is_connected()) {
+        if (comm_is_connected()) {
             wifiInitialized = true;
-            ota_update();
+            ota_update(startTime, first_boot);
             if (time_sync_from_ntp() == ESP_FAIL) {
                 time(&firstBootTime);
-                custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, check_signal_strength(), 0, "", "", 0);
+//mqtt                custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, check_signal_strength(), 0, "", "", 0);
+				send_data("OK", "First boot", startTime, first_boot, true);
                 esp_sleep_enable_timer_wakeup((uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000);
                 gpio_set_level(POWER_ENABLE_GPIO, 0); 
+                ESP_LOGI(TAG, "Going into deep sleep mode for %llu", (unsigned long long)DEEP_SLEEP_INTERVAL_MIN_NTP);
                 esp_deep_sleep_start();
             }
             time(&firstBootTime);
-            custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, check_signal_strength(), 0, "", "", 0);
+//mqtt            custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, check_signal_strength(), 0, "", "", 0);
+			send_data("OK", "First boot", startTime, first_boot, true);
         }
         vTaskDelay(pdMS_TO_TICKS(3000));
         mqttWakeUpCycleCounter++;        
@@ -191,7 +201,7 @@ void app_main(void) {
 			
             dlms_data_t parsed_data;
             if (dlms_parse_frame(buffer, length, &parsed_data) == ESP_OK) {
-                storage_add_to_queue(&parsed_data, frame_reception_time, first_boot);
+                storage_add_to_queue(&parsed_data, frame_reception_time, first_boot, waitTime);
                 rs485completed = true;
                 
                 if (!first_boot) {
@@ -208,37 +218,45 @@ void app_main(void) {
 
         // Záchranný mechanismus při selhání RS485
         if (!rs485completed && badFrameCounter > RS485_BAD_FRAMES_MAX) {
-            if (!custom_wifi_is_connected()) custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+            if (!comm_is_connected()) comm_init(); //custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
             vTaskDelay(pdMS_TO_TICKS(5000));
-            ota_update();
+            ota_update(startTime, first_boot);
             sendBatteryStatus();
-            custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, check_signal_strength(), 0, "", "", 0);
+//mqtt            custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, check_signal_strength(), 0, "", "", 0);
+			send_data("FAILED", "rs485 failed", startTime, first_boot, true);
             esp_sleep_enable_timer_wakeup((uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000);
             gpio_set_level(POWER_ENABLE_GPIO, 0); 
+	    ESP_LOGI(TAG, "Going into deep sleep mode for %llu", (unsigned long long)DEEP_SLEEP_INTERVAL_MIN_NTP);
             esp_deep_sleep_start();                
         }
     }
     
+	ESP_LOGI(TAG, "Wakeup cycle counter: %ld(%ld)", (long)mqttWakeUpCycleCounter, (long)wakeUpCycleCounter);
     // --- 6. ODESLÁNÍ DAT (MQTT & SYNC) ---
     if (first_boot || (mqttWakeUpCycleCounter >= 4)) {
         mqttWakeUpCycleCounter = 0;
         
-        if (!custom_wifi_is_connected()) {
-            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+        if (!comm_is_connected()) {
+//            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+              comm_init();
         }
         vTaskDelay(pdMS_TO_TICKS(2000));
         
-        custom_mqtt_send_data();
+//mqtt        custom_mqtt_send_data();
+		if (first_boot)
+			send_data("OK", "First boot", startTime, first_boot, false);
+		else
+			send_data("OK", "After wakeup", startTime, first_boot, false);
         time_sync_from_ntp_with_drift(first_boot, &drift, &network_delay_sec);
         
-        if (!first_boot) {
-            char s_short[64];
-            formatDatetimeShort(startTime, s_short);
-            custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter, firstBootTime, waitTime, waitTimeMin, waitTimeMax, check_signal_strength(), adaptive_offset, s_short, next_wakeup_str_pers, drift);
-        }
+//        if (!first_boot) {
+//            char s_short[64];
+//            formatDatetimeShort(startTime, s_short);
+//mqtt            custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter, firstBootTime, waitTime, waitTimeMin, waitTimeMax, check_signal_strength(), adaptive_offset, s_short, next_wakeup_str_pers, drift);
+//        }
         
         sendBatteryStatus();
-        ota_update();
+        ota_update(startTime, first_boot);
         resetWaitTime = true;         
     }
 
@@ -292,13 +310,14 @@ void enter_aligned_deep_sleep(void) {
     ESP_LOGI(TAG, "1. Aktualni cas:   %s (UNIX: %lld.%06d)", now_str, (long long)tv_now.tv_sec, (int)tv_now.tv_usec);    
     ESP_LOGI(TAG, "2. Doba spanku:    %.3f sekund", (double)usec_to_sleep / 1000000.0);
     ESP_LOGI(TAG, "3. Plan probuzeni: %s (UNIX: %lld.%06lld)", next_wakeup_str_pers, (long long)next_wakeup_sec, last_planned_wakeup_usec % 1000000LL);
-    SMART_LOGI(TAG, "==========================================");
+//    SMART_LOGI(TAG, "==========================================");
+    ESP_LOGI(TAG, "==========================================");
     
     if (resetWaitTime) {
         waitTimeMin = 250;
         waitTimeMax = 0;
     }
-    
+    ESP_LOGI(TAG, "Going into deep sleep mode ...");
     gpio_set_level(POWER_ENABLE_GPIO, 0); 
     esp_sleep_enable_timer_wakeup(usec_to_sleep);
     esp_deep_sleep_start();
@@ -311,7 +330,7 @@ void time_sync_from_ntp_with_drift(bool first_boot, double *drift_out, double *d
     gettimeofday(&tv_before, NULL);
     int64_t t_start = esp_timer_get_time();
     
-    time_sync_from_ntp(); 
+    comm_time_sync_from_ntp(); 
     
     int64_t t_end = esp_timer_get_time();
     gettimeofday(&tv_after, NULL);
@@ -325,7 +344,7 @@ void time_sync_from_ntp_with_drift(bool first_boot, double *drift_out, double *d
 void sendBatteryStatus() {
     float voltage, soc;
     if (battery_get_status(&voltage, &soc) == ESP_OK) {
-        custom_mqtt_send_status(CMD_BATTERY, voltage, soc);
+//mqtt        custom_mqtt_send_status(CMD_BATTERY, voltage, soc);
     }
 }
 
@@ -341,10 +360,57 @@ void formatDatetimeShort(time_t frametime, char *s) {
 
 const char *get_build_datetime(void) { return BUILD_DATETIME; }
 
-void ota_update() {
-    if (simple_ota_check_and_do_update(OTA_URL) == ESP_OK) {
-        custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, 0, 0, "", "", 0);      
+void send_data(const char *status, const char *reason, time_t startTime, bool first_boot, bool status_only) {
+	ESP_LOGI(TAG, "Odesílám data a status: first_boot %d, status_only: %d", first_boot, status_only);
+	comm_data_t out_data = {0}; // Vynuluje strukturu
+//custom_mqtt(CMD_STATUS, "OK", "After wakeup", bootCount, 
+//   wakeUpCycleCounter, firstBootTime, waitTime, waitTimeMin, waitTimeMax, 
+//   check_signal_strength(), adaptive_offset, s_short, next_wakeup_str_pers, drift);
+//	
+//    state, reason,boot_count,wakeup_cycle_count,first_boot_time,wait_time,
+//    wait_time_min,wait_time_max,RSSI,adaptive_offset,startTime,next_wakeup_str,drift;
+
+//    out_data.rssi = check_signal_strength(); // Bude definováno jinde, nebo přesunuto do comm
+
+//    char s_short[64];
+//    formatDatetimeShort(startTime, s_short);
+//    strncpy(out_data.start_time_str, s_short, sizeof(out_data.start_time_str) - 1);
+//    strncpy(out_data.next_wakeup_str, next_wakeup_str_pers, sizeof(out_data.next_wakeup_str) - 1);
+
+
+    char s_short[64];
+
+    out_data.state = status;
+    out_data.reason = reason;
+    out_data.boot_count = bootCount;
+    out_data.wakeup_cycle_count = wakeUpCycleCounter;
+    out_data.first_boot_time = firstBootTime;
+    out_data.adaptive_offset = adaptive_offset;
+    out_data.ntp_drift = drift;
+    out_data.rssi = check_signal_strength(); // Bude definováno jinde, nebo přesunuto do comm
+    formatDatetimeShort(startTime, s_short);
+    strncpy(out_data.start_time_str, s_short, sizeof(out_data.start_time_str) - 1);
+    strncpy(out_data.next_wakeup_str, next_wakeup_str_pers, sizeof(out_data.next_wakeup_str) - 1);
+
+    if (comm_is_connected()) {
+		if (!status_only) {
+			ESP_LOGI(TAG,"Pokus o odeslani dat.");
+			comm_send(MSG_TYPE_METER_DATA, &out_data); // Odešle hlavní data
+		}
+		if (!first_boot) {
+			ESP_LOGI(TAG, "Pokus o odeslani statusu");
+			comm_send(MSG_TYPE_STATUS, &out_data);     // Odešle status
+		}
+    } else
+		ESP_LOGI(TAG, "comm is not connected yet.");
+}
+
+void ota_update(time_t startTime, bool first_boot) {
+    if (comm_ota_check_and_do_update(OTA_URL, forceOTA) == ESP_OK) {
+//mqtt        custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, 0, 0, "", "", 0);      
+		send_data("OK", "OTA OK", startTime, first_boot, true);
         vTaskDelay(pdMS_TO_TICKS(5000));
         esp_restart();
     }
+//	forceOTA = false;
 }
