@@ -83,7 +83,7 @@ async def handle_data(hass, payload, config):
         sn=""
         
         # Seznam/množina všech klíčů, které očekáváte
-        required_keys = ["1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4]
+        required_keys = ["1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4"]
 
         # Výchozí hodnota pro chybějící metriky (např. 0.0)
         DEFAULT_VALUE = 0.0
