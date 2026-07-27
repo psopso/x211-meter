@@ -102,8 +102,8 @@ async def handle_data(hass, payload, config):
                 
         # 2. Doplňky pro neexistující klíče
         missing_keys = set(required_keys) - set(data_values.keys())
-        _LOGGER.warning(f"Existing keys: {missing_keys}")
-        _LOGGER.warning(f"Required keys: {data_values.keys()}")
+        _LOGGER.warning(f"Existing keys: {data_values.keys()}")
+        _LOGGER.warning(f"Required keys: {required_keys}")
         _LOGGER.warning(f"Missing keys: {missing_keys}")
         for key in missing_keys:
             clean_key = key.replace('.', '_')
@@ -180,7 +180,7 @@ async def handle_status(hass, payload_str, config):
                     if _LAST_STATUS_VALUES.get(field_key) != v:
                         fields.append(f'{field_key}="{v}"')
                         _LAST_STATUS_VALUES[field_key] = v
-                 if key_lower in ["SerialNo"]:
+                 if key_lower in ["serialno"]:
                     _LAST_SERIAL_NO = str(v)
                     
     # Odesíláme do InfluxDB POUZE tehdy, pokud se do 'fields' něco přidalo (tj. nastala změna)
