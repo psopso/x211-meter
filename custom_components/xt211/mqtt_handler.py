@@ -26,6 +26,8 @@ _LOGGER = logging.getLogger(__name__)
 
 _LAST_STATUS_VALUES = {}
 
+_LAST_SERIAL_NO = "0"
+
 def _parse_and_convert_time(time_str):
     """
     Parsuje časový řetězec z měřiče a vrací Unix timestamp v nanosekundách.
@@ -108,7 +110,7 @@ async def handle_data(hass, payload, config):
             fields.append(f"{clean_key}={DEFAULT_VALUE}")
 
         # 'device=XT211' je tag (indexované)
-        tags = "meter="+sn
+        tags = "meter="+_LAST_SERIAL_NO
         
         if fields:
             fields_str = ",".join(fields)
@@ -178,7 +180,9 @@ async def handle_status(hass, payload_str, config):
                     if _LAST_STATUS_VALUES.get(field_key) != v:
                         fields.append(f'{field_key}="{v}"')
                         _LAST_STATUS_VALUES[field_key] = v
-
+                 if key_lower in ["SerialNo"]:
+                    _LAST_SERIAL_NO = str(v)
+                    
     # Odesíláme do InfluxDB POUZE tehdy, pokud se do 'fields' něco přidalo (tj. nastala změna)
     if fields:
         lines.append(f"xt211_status,{tags} {','.join(fields)}")
