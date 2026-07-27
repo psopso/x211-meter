@@ -100,7 +100,7 @@ async def handle_data(hass, payload, config):
                 
         # 2. Doplňky pro neexistující klíče
         missing_keys = set(required_keys) - set(data_values.keys())
-
+        _LOGGER.warning(f"Missing keys: {missing_keys}")
         for key in missing_keys:
             clean_key = key.replace('.', '_')
             fields.append(f"{clean_key}={DEFAULT_VALUE}")
