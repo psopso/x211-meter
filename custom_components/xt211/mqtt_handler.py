@@ -181,7 +181,7 @@ async def handle_status(hass, payload_str, config):
                         fields.append(f'{field_key}="{v}"')
                         _LAST_STATUS_VALUES[field_key] = v
                  if key_lower in ["serialno"]:
-                    _LAST_SERIAL_NO = str(v)
+                    _LAST_SERIAL_NO = v
                     
     # Odesíláme do InfluxDB POUZE tehdy, pokud se do 'fields' něco přidalo (tj. nastala změna)
     if fields:
