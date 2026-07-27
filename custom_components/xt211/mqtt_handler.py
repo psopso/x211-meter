@@ -80,6 +80,12 @@ async def handle_data(hass, payload, config):
         tags = "" 
         sn=""
         
+        # Seznam/množina všech klíčů, které očekáváte
+        required_keys = ["1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4]
+
+        # Výchozí hodnota pro chybějící metriky (např. 0.0)
+        DEFAULT_VALUE = 0.0
+        
         fields = []
         for key, value in data_values.items():
             if isinstance(value, (int, float)):
@@ -91,6 +97,13 @@ async def handle_data(hass, payload, config):
                 # string by mělo být sériové číslo
                 #clean_key = key.replace('.', '_')
                 sn = value
+                
+        # 2. Doplňky pro neexistující klíče
+        missing_keys = set(required_keys) - set(data_values.keys())
+
+        for key in missing_keys:
+            clean_key = key.replace('.', '_')
+            fields.append(f"{clean_key}={DEFAULT_VALUE}")
 
         # 'device=XT211' je tag (indexované)
         tags = "meter="+sn
