@@ -146,7 +146,7 @@ async def handle_status(hass, payload_str, config):
     lines = []
     tags = "device=XT211_Status"
     fields = []
-
+    _LOGGER(f"Vstupní data: {data}");
     # Zpracování baterie (připraveno pro případné budoucí použití)
     if "battery" in data:
         for k, v in data["battery"].items():
