@@ -132,6 +132,7 @@ async def async_setup_entry(
                 hass.data[DOMAIN][entry.entry_id] = entities
 
         # ---> ZMĚNA: Zpracování výsledku zápisu <---
+        payload["SerialNo"] = status_sensor._attr_extra_state_attributes["SerialNo"]
         influx_result = await handle_data(hass, payload, config)
 
         if influx_result is True:
@@ -167,8 +168,8 @@ async def async_setup_entry(
                 if json_data["Status"].get("LastWaitMax") != None:
                     waittime_sensor_max.set_value(json_data["Status"]["LastWaitMax"])
                 if json_data["Status"].get("Status") != None:
-                    status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data.get("Status", {}).get("StatusText", "")  #json_data["Status"]["StatusText"])
-                status_sensor._attr_extra_state_attributes = {"last_message": json_data}
+                    status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data.get("Status", {}).get("StatusText", ""))  #json_data["Status"]["StatusText"]
+                status_sensor._attr_extra_state_attributes = {"last_message": json_data, "SerialNo": json_data.get("Status", {}).get("SerialNo", "0")}
         
         await handle_status(hass, msg.payload, config)
     

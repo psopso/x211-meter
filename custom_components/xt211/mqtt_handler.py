@@ -68,6 +68,7 @@ async def handle_data(hass, payload, config):
         return # InfluxDB není nastaven
     
     try:
+        serialno = payload.get("SerialNo","0")
         data_values = payload.get("data", {}).get("values", {})
         reading_time_str = payload.get("data", {}).get("reading_datetime")
         
@@ -76,7 +77,7 @@ async def handle_data(hass, payload, config):
 
         if not data_values or not timestamp_ns:
             return
-
+        
         lines = []
         # 'device=XT211' je tag (indexované)
         tags = "" 
@@ -102,27 +103,26 @@ async def handle_data(hass, payload, config):
                 
         # 2. Doplňky pro neexistující klíče
         missing_keys = set(required_keys) - set(data_values.keys())
-        _LOGGER.warning(f"Existing keys: {data_values.keys()}")
-        _LOGGER.warning(f"Required keys: {required_keys}")
-        _LOGGER.warning(f"Missing keys: {missing_keys}")
         for key in missing_keys:
             clean_key = key.replace('.', '_')
             fields.append(f"{clean_key}={DEFAULT_VALUE}")
 
         # 'device=XT211' je tag (indexované)
-        tags = "meter="+_LAST_SERIAL_NO
-        
-        if fields:
-            fields_str = ",".join(fields)
-            
-            # Formát: measurement,tagy field1=hodnota,field2=hodnota TIMESTAMP
-            line = f"home_energy,{tags} {fields_str} {timestamp_ns}"
-            lines.append(line)
+        if serialno != "" and serialno != "0":
+            tags = "meter="+serialno
+            if fields:
+                fields_str = ",".join(fields)
+                
+                # Formát: measurement,tagy field1=hodnota,field2=hodnota TIMESTAMP
+                line = f"home_energy,{tags} {fields_str} {timestamp_ns}"
+                lines.append(line)
 
-        if lines:
-            # ---> ZMĚNA: Přidán 'return' <---
-            return await _send_to_influx(hass, config, "\n".join(lines))
-
+            if lines:
+                # ---> ZMĚNA: Přidán 'return' <---
+                return await _send_to_influx(hass, config, "\n".join(lines))
+        else:
+            _LOGGER.error("Chybí SerialNo")
+            return False
         return None # Nebylo co odeslat
         
     except Exception as e:
@@ -146,7 +146,6 @@ async def handle_status(hass, payload_str, config):
     lines = []
     tags = "device=XT211_Status"
     fields = []
-    _LOGGER(f"Vstupní data: {data}");
     # Zpracování baterie (připraveno pro případné budoucí použití)
     if "battery" in data:
         for k, v in data["battery"].items():
