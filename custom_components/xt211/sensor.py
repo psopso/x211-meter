@@ -167,7 +167,7 @@ async def async_setup_entry(
                 if json_data["Status"].get("LastWaitMax") != None:
                     waittime_sensor_max.set_value(json_data["Status"]["LastWaitMax"])
                 if json_data["Status"].get("Status") != None:
-                    status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data["Status"]["StatusText"])
+                    status_sensor.set_value(json_data["Status"]["Status"]+", "+json_data.get("Status", {}).get("StatusText", "")  #json_data["Status"]["StatusText"])
                 status_sensor._attr_extra_state_attributes = {"last_message": json_data}
         
         await handle_status(hass, msg.payload, config)
