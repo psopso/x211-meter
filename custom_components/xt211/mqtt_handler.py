@@ -160,6 +160,7 @@ async def handle_status(hass, payload_str, config):
     if "Status" in data:
         # Váš whitelist
         allowed_numeric_keys = ["lastwaitmin"] 
+        timestamp_ns = _parse_and_convert_time(data["datetime"]);
         
         for k, v in data["Status"].items():
             key_lower = k.lower()
