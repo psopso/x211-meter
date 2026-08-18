@@ -1,3 +1,0 @@
-CompileFlags:
-  CompilationDatabase: G:/Users/pso/OneDrive/workspace/elektromer_mqtt/build_test
-  Remove: [-m*, -f*]
