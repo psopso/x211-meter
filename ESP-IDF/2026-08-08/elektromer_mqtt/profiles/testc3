@@ -1,0 +1,1 @@
+-B build_testc3 -DENV=testc3 set-target esp32C3 build
