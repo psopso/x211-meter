@@ -143,6 +143,10 @@ async def handle_status(hass, payload_str, config):
         _LOGGER.warning("Nebylo možné naparsovat JSON statusu.")
         return
 
+//Aktuální čas
+    datetime_ns = time.time_ns()
+    difference_ns = 0
+
     lines = []
     tags = "device=XT211_Status"
     fields = []
@@ -161,6 +165,8 @@ async def handle_status(hass, payload_str, config):
         # Váš whitelist
         allowed_numeric_keys = ["lastwaitmin"] 
         timestamp_ns = _parse_and_convert_time(data["datetime"]);
+        difference_ns = timestamp_ns - datetime_ns
+        _LOGGER.debug("Time difference: %d ns", time.time_ns())
         
         for k, v in data["Status"].items():
             key_lower = k.lower()
