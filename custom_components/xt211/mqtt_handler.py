@@ -143,7 +143,7 @@ async def handle_status(hass, payload_str, config):
         _LOGGER.warning("Nebylo možné naparsovat JSON statusu.")
         return
 
-//Aktuální čas
+    #Aktuální čas
     datetime_ns = time.time_ns()
     difference_ns = 0
 
