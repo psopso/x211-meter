@@ -1,0 +1,1 @@
+-B build_home -DENV=home set-target esp32 build

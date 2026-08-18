@@ -1,0 +1,402 @@
+#include <iso646.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <time.h>
+#include <sys/time.h>      // Pridano pro gettimeofday
+#include "esp_timer.h"     // Pridano pro esp_timer_get_time
+#include "esp_err.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_log.h"
+#include "esp_sleep.h"
+#include "driver/gpio.h"
+#include "nvs_flash.h"
+
+#include "custom_config.h"
+#include "custom_time.h"
+#include "custom_rs485.h"
+#include "custom_dlms.h"
+#include "custom_storage.h"
+#include "custom_mqtt.h"
+#include "custom_battery.h"
+#include "custom_led.h"
+
+#include "custom_wifi.h"
+#include "custom_ota.h"
+
+#include "my_debug.h"
+
+static const char *TAG = "MAIN";
+
+// RTC paměť pro uchování dat mezi spánky
+RTC_DATA_ATTR int bootCount = 0;
+RTC_DATA_ATTR int wakeUpCycleCounter = 0;
+RTC_DATA_ATTR int badFrameCounter = 0;
+RTC_DATA_ATTR int mqttWakeUpCycleCounter = 0;
+RTC_DATA_ATTR time_t firstBootTime = 0;
+RTC_DATA_ATTR int32_t adaptive_offset = 0; 
+RTC_DATA_ATTR unsigned char waitTimeMin = 0;
+RTC_DATA_ATTR unsigned char waitTimeMax = 0;
+RTC_DATA_ATTR char next_wakeup_str_pers[64]= {0};
+
+bool wifiInitialized = false;
+bool resetWaitTime = false;
+
+unsigned char diff = 0;
+int waitTime = 0;
+double drift = 0;
+double network_delay_sec = 0;
+// Prototypy funkcí
+void ota_update();
+const char *get_build_datetime(void);
+void sendBatteryStatus();
+void enter_aligned_deep_sleep(void);
+void formatDatetime(time_t frametime, char *s);
+void formatDatetimeShort(time_t frametime, char *s);
+void time_sync_from_ntp_with_drift(bool first_boot, double *drift, double *network_delay_sec);
+
+void app_main(void) {
+    #if CONFIG_MY_DEBUG_ENABLED
+        my_debug_register_sender(mqtt_send_debug);
+        custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+        vTaskDelay(pdMS_TO_TICKS(3000));
+        ota_update();
+        my_debug_log("MAIN", "Aplikace nastartovala, debug je aktivni.");
+    #endif
+
+    time_t startTime = 0;
+    int8_t signalStrength = 0;
+    time(&startTime);
+
+    char s[64] = {0};
+    char s1[64] = {0};
+    formatDatetime(startTime, s);
+    formatDatetimeShort(startTime, s1);
+
+    ESP_LOGI(TAG, "Datum a cas startu: %s Poslední plánovaný čas startu: %s", s, next_wakeup_str_pers);
+    ESP_LOGI(TAG, "Firmware build UTC: %s\n", get_build_datetime());
+    
+    // Inicializace NVS flash
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
+
+#ifndef ENV_TEST
+    // Napájení periferií
+    gpio_set_direction(POWER_ENABLE_GPIO, GPIO_MODE_OUTPUT);
+    gpio_set_level(POWER_ENABLE_GPIO, 1);
+    gpio_set_direction(RS485_ENABLE_RX, GPIO_MODE_OUTPUT);
+    gpio_set_level(RS485_ENABLE_RX, 0);
+#endif
+
+    vTaskDelay(pdMS_TO_TICKS(500)); 
+
+    storage_init();
+    #ifndef ENV_TEST
+    battery_init();
+    #endif
+
+    esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+    bool first_boot = (wakeup_reason == ESP_SLEEP_WAKEUP_UNDEFINED);
+    
+    // LED signalizace (Červená pro restart, Modrá pro probuzení)
+    if (first_boot)
+      switchLED(true, 5, 0, 0);
+    else
+      switchLED(true, 0, 0, 5);
+
+    if (first_boot) {
+        bootCount += 1;
+        adaptive_offset = 0; //DEEP_SLEEP_OFFSET_S; // Výchozí nastavení z configu
+        
+        ESP_LOGI(TAG, "Prvni spusteni po restartu.");
+        #ifndef CONFIG_MY_DEBUG_ENABLED
+        custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+        #endif
+                
+        if (custom_wifi_is_connected()) {
+            wifiInitialized = true;
+            ota_update();
+            esp_err_t ntp_esp_status = time_sync_from_ntp();
+            if (ntp_esp_status == ESP_FAIL) {
+                time(&firstBootTime);
+                signalStrength = check_signal_strength();
+                custom_mqtt_send_status(CMD_STATUS, "FAILED", "NTP failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, signalStrength, 0, "", "", 0);
+                // Fail-safe spánek při chybě NTP
+                uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
+                esp_sleep_enable_timer_wakeup(sleep_duration_us);
+                gpio_set_level(POWER_ENABLE_GPIO, 0); 
+                esp_deep_sleep_start();
+            }
+            time(&firstBootTime);
+            signalStrength = check_signal_strength();
+            custom_mqtt_send_status(CMD_STATUS, "OK", "First start", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, signalStrength, 0, "", "", 0);
+        }
+        vTaskDelay(pdMS_TO_TICKS(3000));
+        mqttWakeUpCycleCounter += 1;        
+    } else {
+        wakeUpCycleCounter += 1;
+        mqttWakeUpCycleCounter += 1;
+    };
+
+    rs485_init();
+    uint8_t buffer[UART_BUFFER_SIZE];
+    time_t frame_reception_time;
+    bool rs485completed = false;
+
+    my_debug_log("MAIN", "Cekam na frame.");
+	// --- NOVÝ VÝPIS ČASU PŘED ČEKÁNÍM ---
+    time_t now_before_wait;
+    time(&now_before_wait);
+    char wait_time_str[50];
+    formatDatetime(now_before_wait, wait_time_str);
+    ESP_LOGI(TAG, "Zacinam cekat na frame v: %s", wait_time_str);
+    // ------------------------------------    
+    while (!rs485completed) {    
+        int length = rs485_read_frame(buffer, UART_BUFFER_SIZE, &frame_reception_time);
+        if (length > 0) {
+            my_debug_log("MAIN", "Frame prijat.");
+            
+            // --- OPRAVENY VYPOCET DIFF (Ošetření NTP skoku) ---
+            if (first_boot) {
+                diff = 0;
+                waitTimeMin = 250;
+                waitTimeMax = 0;
+                ESP_LOGI(TAG, "First boot: diff resetovan na 0 kvuli NTP skoku.");
+            } else {
+                double real_diff = difftime(frame_reception_time, startTime);
+                if (real_diff < 0) diff = 0;
+                else if (real_diff > 255) diff = 255;
+                else diff = (unsigned char)real_diff;
+            }
+			waitTime = (int)diff;
+            if (((int)diff < 65) & ((int)diff > -65)) {
+            	if (waitTime < waitTimeMin)
+            		waitTimeMin = waitTime;
+            	if (waitTime > waitTimeMax)
+            		waitTimeMax = waitTime;
+			}
+			
+            dlms_data_t parsed_data;
+            if (dlms_parse_frame(buffer, length, &parsed_data) == ESP_OK) {
+                storage_add_to_queue(&parsed_data, frame_reception_time, first_boot);
+                rs485completed = true;
+                
+                // --- DYNAMICKA KALIBRACE CASU SPANKU ---
+                if (!first_boot) {
+                    //int target_wait = 5; // Cíl: čekat 5 sekund po probuzení
+                    if (true) {  //(diff <= 40) {
+						//diff, jak dlouho čekal na frame
+						//Sputstil se dříve, to odečteme
+						diff += DEEP_SLEEP_OFFSET_S;  //diff - 3 Tolik by čekal, kdyby se načasoval přesně na minutu
+						int32_t correction = (int32_t)diff;  // - target_wait;
+                        adaptive_offset += correction;  //K původnímu adaptive offset přičtu diif
+                    } else {
+                        // Pokud čekáme příliš dlouho, pravděpodobně jsme jeden rámec zmeškali
+                        //adaptive_offset -= 10;
+                    }
+                    
+                    // Mantinely pro offset
+                    //int32_t max_offset = DEEP_SLEEP_OFFSET_S + 120;
+                    //int32_t min_offset = DEEP_SLEEP_OFFSET_S - 120;
+                    //if (adaptive_offset > max_offset) adaptive_offset = max_offset;
+                    //if (adaptive_offset < min_offset) adaptive_offset = min_offset;
+                    
+                    ESP_LOGI(TAG, "Adaptivni offset: %ld s (diff: %d s)(Waittime: %ld s)", (long)adaptive_offset, diff, (long)waitTime);
+                    ESP_LOGI(TAG,"diff - Tolik by čekal, kdyby se načasoval přesně na minutu  Waittime - původní diff");
+                }
+            } else {
+                badFrameCounter += 1;
+            }
+        } else {
+            badFrameCounter += 1;
+        }
+
+        // Pokud RS485 selhává, pošleme stav a zkusíme to příště
+        if (!rs485completed && badFrameCounter > RS485_BAD_FRAMES_MAX) {
+            if (!custom_wifi_is_connected()) {
+                custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+                vTaskDelay(pdMS_TO_TICKS(5000));
+            }
+            ota_update();
+            sendBatteryStatus();
+            signalStrength = check_signal_strength();
+            custom_mqtt_send_status(CMD_STATUS, "FAILED", "rs485 failed", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0,signalStrength, 0, "", "", 0);
+            uint64_t sleep_duration_us = (uint64_t)DEEP_SLEEP_INTERVAL_MIN_NTP * 60 * 1000000;
+            esp_sleep_enable_timer_wakeup(sleep_duration_us);
+            gpio_set_level(POWER_ENABLE_GPIO, 0); 
+            esp_deep_sleep_start();                
+        }
+    }
+    
+    // Odesílání dat přes MQTT (každý 4. cyklus nebo při prvním bootu)
+    if ((first_boot) || (mqttWakeUpCycleCounter >= 4)) {
+        mqttWakeUpCycleCounter = 0;
+        if (!custom_wifi_is_connected()) {
+            custom_wifi_init(WIFI_SSID, WIFI_PASSWORD, WIFI_IP, WIFI_GW, WIFI_NETMASK);
+            vTaskDelay(pdMS_TO_TICKS(5000));
+        }
+        custom_mqtt_send_data();
+        // --- MERENI NTP DRIFTU ---
+        time_sync_from_ntp_with_drift(first_boot, &drift, &network_delay_sec);
+        if (!first_boot) {
+            signalStrength = check_signal_strength();
+            custom_mqtt_send_status(CMD_STATUS, "OK", "After wakeup", bootCount, wakeUpCycleCounter, firstBootTime, diff, waitTimeMin, waitTimeMax, signalStrength, adaptive_offset, s1, next_wakeup_str_pers, drift);
+        }
+        sendBatteryStatus();
+        
+        ESP_LOGI(TAG, "NTP synchronizace: Hodiny opraveny o %.3f sekund (sitove zpozdeni: %.3f s)", drift, network_delay_sec);
+        /*        
+        if (!first_boot) {
+            struct timeval tv_before, tv_after;
+            
+            gettimeofday(&tv_before, NULL);
+            int64_t t_start = esp_timer_get_time();
+            
+            time_sync_from_ntp(); 
+            
+            int64_t t_end = esp_timer_get_time();
+            gettimeofday(&tv_after, NULL);
+            
+            double time_b_sec = tv_before.tv_sec + (tv_before.tv_usec / 1000000.0);
+            double time_a_sec = tv_after.tv_sec + (tv_after.tv_usec / 1000000.0);
+            double network_delay_sec = (double)(t_end - t_start) / 1000000.0;
+            
+            double drift = (time_a_sec - time_b_sec) - network_delay_sec;
+            
+            ESP_LOGI(TAG, "NTP synchronizace: Hodiny opraveny o %.3f sekund (sitove zpozdeni: %.3f s)", drift, network_delay_sec);
+        }
+        */
+        // -------------------------
+
+        ota_update();
+        
+        resetWaitTime = true;         
+    }
+
+    storage_cleanup_old_data();
+
+    // Vypočet a zahájení zarovnaného hlubokého spánku
+    enter_aligned_deep_sleep();
+}
+
+// --- POMOCNÉ FUNKCE ---
+void enter_aligned_deep_sleep(void) {
+    struct timeval tv_now;
+    gettimeofday(&tv_now, NULL); 
+    
+    uint32_t interval_sec = DEEP_SLEEP_INTERVAL_MIN * 60;
+    
+    // Výpočet zbytku do další periody v mikrosekundách
+    uint32_t sec_past_anchor = (uint32_t)tv_now.tv_sec % interval_sec;
+    uint32_t usec_past_anchor = (uint32_t)tv_now.tv_usec;
+    int64_t usec_to_sleep = (int64_t)(interval_sec - sec_past_anchor) * 1000000LL - usec_past_anchor;
+    
+    if (adaptive_offset > 120 || adaptive_offset < -120)
+      adaptive_offset = 0;
+    
+    int32_t final_offset = adaptive_offset;
+    if (final_offset > 30) final_offset -= 60;
+    else if (final_offset < -30) final_offset += 60;
+        
+    usec_to_sleep += (int64_t)(final_offset + DEEP_SLEEP_OFFSET_S) * 1000000LL;
+
+    if (usec_to_sleep < 10000000LL) {
+        usec_to_sleep += (int64_t)interval_sec * 1000000LL;
+    }
+
+    // --- KONTROLNI VYPIS TROJICE CASU ---
+    // 1. Čas, ze kterého vycházíme (Aktuální čas)
+    struct tm now_tm;
+    char now_str[64];
+    localtime_r(&tv_now.tv_sec, &now_tm);
+    strftime(now_str, sizeof(now_str), "%H:%M:%S", &now_tm);
+    
+    // 2. Doba spánku
+    double sleep_sec = (double)usec_to_sleep / 1000000.0;
+    
+    // 3. Výsledný (plánovaný) čas probuzení s mikrosekundovou přesností
+    int64_t planned_total_usec = (int64_t)tv_now.tv_sec * 1000000LL + tv_now.tv_usec + usec_to_sleep;
+    time_t next_wakeup_sec = planned_total_usec / 1000000LL;
+    int next_wakeup_usec = planned_total_usec % 1000000LL;
+
+    struct tm next_wakeup_tm;
+    char next_wakeup_str[64];
+    localtime_r(&next_wakeup_sec, &next_wakeup_tm);
+    strftime(next_wakeup_str, sizeof(next_wakeup_str), "%H:%M:%S", &next_wakeup_tm);
+
+    ESP_LOGI(TAG, "==========================================");
+    ESP_LOGI(TAG, "1. Aktualni cas:   %s (UNIX: %lld.%06d)", now_str, (long long)tv_now.tv_sec, (int)tv_now.tv_usec);
+    ESP_LOGI(TAG, "2. Doba spanku:    %.3f sekund", sleep_sec);
+    ESP_LOGI(TAG, "3. Plan probuzeni: %s (UNIX: %lld.%06d)", next_wakeup_str, (long long)next_wakeup_sec, next_wakeup_usec);
+    ESP_LOGI(TAG, "==========================================");
+    // ------------------------------------
+    
+    if (resetWaitTime) {
+        waitTimeMin = 250;
+        waitTimeMax = 0;
+    }
+    
+    gpio_set_level(POWER_ENABLE_GPIO, 0); 
+    esp_sleep_enable_timer_wakeup(usec_to_sleep);
+    esp_deep_sleep_start();
+}
+void sendBatteryStatus() {
+    float voltage, soc;
+    if (battery_get_status(&voltage, &soc) == ESP_OK) {
+        ESP_LOGI(TAG, "Battery: %.2fV  %.1f%%", voltage, soc);
+        custom_mqtt_send_status(CMD_BATTERY, voltage, soc);
+    }
+}
+
+void formatDatetime(time_t frametime, char *s) {
+    struct tm *local_time_info;
+    local_time_info = localtime(&frametime); 
+    strftime(s, 50, "%c", local_time_info);
+}
+
+void formatDatetimeShort(time_t frametime, char *s) {
+    struct tm *local_time_info;
+    local_time_info = localtime(&frametime); 
+    strftime(s, 50, "%Y-%m-%d %H:%M:%S", local_time_info);
+}
+
+const char *get_build_datetime(void) {
+    return BUILD_DATETIME;
+}
+
+void ota_update() {
+    esp_err_t err = simple_ota_check_and_do_update(OTA_URL);
+    if (err == ESP_OK) {
+        custom_mqtt_send_status(CMD_STATUS, "OK", "OTA-OK", bootCount, wakeUpCycleCounter, firstBootTime, 0, 0, 0, 0, 0, "", "", 0);      
+        vTaskDelay(pdMS_TO_TICKS(5000));
+        esp_restart();
+    }
+}
+
+void time_sync_from_ntp_with_drift(bool first_boot, double *drift, double *network_delay_sec) {
+	// --- MERENI NTP DRIFTU ---        
+	if (!first_boot) {
+	    struct timeval tv_before, tv_after;
+	    
+	    gettimeofday(&tv_before, NULL);
+	    int64_t t_start = esp_timer_get_time();
+	    
+	    time_sync_from_ntp(); 
+	    
+	    int64_t t_end = esp_timer_get_time();
+	    gettimeofday(&tv_after, NULL);
+	    
+	    double time_b_sec = tv_before.tv_sec + (tv_before.tv_usec / 1000000.0);
+	    double time_a_sec = tv_after.tv_sec + (tv_after.tv_usec / 1000000.0);
+	    *network_delay_sec = (double)(t_end - t_start) / 1000000.0;
+	    
+	    *drift = (time_a_sec - time_b_sec) - *network_delay_sec;
+	}
+	// -------------------------
+};
+	

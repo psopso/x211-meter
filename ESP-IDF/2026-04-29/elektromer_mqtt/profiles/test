@@ -1,0 +1,1 @@
+-B build_test -DENV=test set-target esp32S3 build
