@@ -99,6 +99,8 @@ async def handle_data(hass, payload, config):
             if isinstance(value, (str)):
                 # string by mělo být sériové číslo
                 #clean_key = key.replace('.', '_')
+		if key = "serialno"
+		  serialno = value
                 sn = value
                 
         # 2. Doplňky pro neexistující klíče
