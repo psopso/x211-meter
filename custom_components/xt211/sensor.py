@@ -123,8 +123,8 @@ async def async_setup_entry(
                     sensor = Xt211ObisSensor(device_info, entry_id, obis)
                     entities.append(sensor)
                     new_entities.append(sensor)
-                
-                sensor.set_value(value)
+                if obis == "96.1.1":
+                  status_sensor._attr_extra_state_attributes = {"SerialNo": value}
 
             if new_entities:
                 async_add_entities(new_entities)
