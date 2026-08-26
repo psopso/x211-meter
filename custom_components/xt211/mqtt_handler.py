@@ -99,7 +99,7 @@ async def handle_data(hass, payload, config):
             if isinstance(value, (str)):
                 # string by mělo být sériové číslo
                 #clean_key = key.replace('.', '_')
-                if key == "serialno":
+                if key == "96.1.1s":
                   serialno = value
                 sn = value
                 
