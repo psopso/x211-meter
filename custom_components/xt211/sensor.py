@@ -154,8 +154,12 @@ async def async_setup_entry(
         if msg.payload != "":
             json_data = json.loads(msg.payload)
             if json_data.get("battery") != None:
-                if (json_data["battery"].get("Voltage") != None) and (json_data["battery"].get("SOC") != None):
-                    str = f"{round(json_data["battery"]["SOC"],2)}%, {round(json_data["battery"]["Voltage"],2)}V"
+                json_data_battery = json_data.get("battery")
+            if json_data.get("Battery") != None:
+                json_data_battery = json_data.get("Battery")
+            if True:
+                if (json_data_battery.get("Voltage") != None) and (json_data_battery.get("SOC") != None):
+                    str = f"{round(json_data["battery"]["SOC"],2)}%, {round(json_data_battery["Voltage"],2)}V"
                     battery_sensor.set_value(str)
                     battery_sensor._attr_extra_state_attributes = {"last_message": json_data}
                 else:
