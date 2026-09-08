@@ -152,15 +152,20 @@ async def handle_status(hass, payload_str, config):
     lines = []
     tags = "device=XT211_Status"
     fields = []
-    # Zpracování baterie (připraveno pro případné budoucí použití)
-    if "battery" in data:
-        for k, v in data["battery"].items():
-             if isinstance(v, (int, float)):
+    # Najdeme, zda v datech existuje 'battery' nebo 'Battery'
+    actual_battery_key = next((k for k in ("battery", "Battery") if k in data), None)
+
+    # Pokud jeden z nich existuje, spustíme smyčku
+    if actual_battery_key:
+        for k, v in data[actual_battery_key].items():
+            if isinstance(v, (int, float)):
                 field_key = f"battery_{k.lower()}"
+            
                 # 👇 Zkontrolujeme, zda se hodnota změnila
                 if _LAST_STATUS_VALUES.get(field_key) != float(v):
                     fields.append(f"{field_key}={float(v)}")
-                    _LAST_STATUS_VALUES[field_key] = float(v) # Uložíme si novou hodnotu
+                    _LAST_STATUS_VALUES[field_key] = float(v)  # Uložíme si novou hodnotu
+    
 
     # Zpracování obecného statusu
     if "Status" in data:
