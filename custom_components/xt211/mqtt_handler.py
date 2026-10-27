@@ -1,6 +1,6 @@
 import logging
 import aiohttp
-import time
+from time import time_ns as get_time_ns
 # Přidán import timezone
 from datetime import datetime, timezone 
 
@@ -147,7 +147,7 @@ async def handle_status(hass, payload_str, config):
         return
 
     #Aktuální čas
-    datetime_ns = time.time_ns()
+    datetime_ns = get_time_ns()
     difference_ns = 0
 
     lines = []
@@ -174,7 +174,7 @@ async def handle_status(hass, payload_str, config):
         allowed_numeric_keys = ["lastwaitmin"] 
         timestamp_ns = _parse_and_convert_time(data["datetime"]);
         difference_ns = timestamp_ns - datetime_ns
-        _LOGGER.debug("Time difference: %d ns", time.time_ns())
+        _LOGGER.debug("Time difference: %d ns", get_time_ns())
         
         for k, v in data["Status"].items():
             key_lower = k.lower()
