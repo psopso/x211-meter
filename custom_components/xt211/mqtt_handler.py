@@ -200,6 +200,10 @@ async def handle_status(hass, payload_str, config):
     # Odesíláme do InfluxDB POUZE tehdy, pokud se do 'fields' něco přidalo (tj. nastala změna)
     if fields:
         lines.append(f"xt211_status,{tags} {','.join(fields)}")
+        payload_to_send = "\n".join(lines)
+        
+        # 👇 TADY POŠLETE ŘETĚZEC DO LOGU (úroveň DEBUG) 👇
+        _LOGGER.info(f"Odesílám do InfluxDB:\n{payload_to_send}")
         await _send_to_influx(hass, config, "\n".join(lines))
 
 async def _send_to_influx(hass, config, data_payload):
