@@ -13,8 +13,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 # Pro jednoduchost se spoléháme na standardní funkce a známý formát.
 # Váš funkční formát by mohl být: "%a %Y-%m-%d %H:%M:%S %Z"
 # Mon 2025-11-24 07:23:38 GMT
-# KNOWN_TIME_FORMAT = "%a %Y-%m-%d %H:%M:%S %Z"
-KNOWN_TIME_FORMAT = "%a %b %d %H:%M:%S %Y"
+KNOWN_TIME_FORMAT = "%a %Y-%m-%d %H:%M:%S %Z"
+# KNOWN_TIME_FORMAT = "%a %b %d %H:%M:%S %Y"
 
 from .const import (
     CONF_INFLUXDB_HOST,
