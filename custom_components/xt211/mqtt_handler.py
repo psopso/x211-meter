@@ -173,6 +173,8 @@ async def handle_status(hass, payload_str, config):
         # Váš whitelist
         allowed_numeric_keys = ["lastwaitmin"] 
         timestamp_ns = _parse_and_convert_time(data["datetime"]);
+        _LOGGER.debug("Timestampns: %d ns", timestamp_ns)
+        _LOGGER.debug("Datetimens: %d ns", datetime_ns)
         difference_ns = timestamp_ns - datetime_ns
         _LOGGER.debug("Time difference: %d ns", get_time_ns())
         
