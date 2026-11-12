@@ -174,7 +174,8 @@ async def handle_status(hass, payload_str, config):
         allowed_numeric_keys = ["lastwaitmin"] 
         timestamp_ns = _parse_and_convert_time(data["datetime"]);
         _LOGGER.debug("Timestamp: %s", data["datetime"])
-        #_LOGGER.debug("Datetimens: %d ns", datetime_ns)
+        _LOGGER.debug("Datetimens: %d ns", datetime_ns)
+        _LOGGER.debug("Timestampns: %d ns", timestamp_ns)
         difference_ns = timestamp_ns - datetime_ns
         _LOGGER.debug("Time difference: %d ns", get_time_ns())
         
