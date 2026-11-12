@@ -13,7 +13,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 # Pro jednoduchost se spoléháme na standardní funkce a známý formát.
 # Váš funkční formát by mohl být: "%a %Y-%m-%d %H:%M:%S %Z"
 # Mon 2025-11-24 07:23:38 GMT
-KNOWN_TIME_FORMAT = "%a %Y-%m-%d %H:%M:%S %Z"
+# KNOWN_TIME_FORMAT = "%a %Y-%m-%d %H:%M:%S %Z"
+KNOWN_TIME_FORMAT = "%a %b %d %H:%M:%S %Y"
 
 from .const import (
     CONF_INFLUXDB_HOST,
@@ -173,11 +174,11 @@ async def handle_status(hass, payload_str, config):
         # Váš whitelist
         allowed_numeric_keys = ["lastwaitmin"] 
         timestamp_ns = _parse_and_convert_time(data["datetime"]);
-        _LOGGER.debug("Timestamp: %s", data["datetime"])
-        _LOGGER.debug("Datetimens: %d ns", datetime_ns)
-        _LOGGER.debug("Timestampns: %d ns", timestamp_ns)
+        #_LOGGER.debug("Timestamp: %s", data["datetime"])
+        #_LOGGER.debug("Datetimens: %d ns", datetime_ns)
+        #_LOGGER.debug("Timestampns: %d ns", timestamp_ns)
         difference_ns = timestamp_ns - datetime_ns
-        _LOGGER.debug("Time difference: %d ns", get_time_ns())
+        _LOGGER.debug("Time difference: %d ns", difference_ns)
         
         for k, v in data["Status"].items():
             key_lower = k.lower()
