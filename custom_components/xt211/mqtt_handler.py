@@ -64,7 +64,8 @@ def _parse_and_convert_time(time_str):
 
 async def handle_data(hass, payload, config):
     """Zpracování dat z MQTT a odeslání do InfluxDB s přesným časem měření."""
-    
+    _LOGGER.info(f"Zpracování dat z MQTT a odeslání do InfluxDB s přesným časem měření.")
+
     host = config.get(CONF_INFLUXDB_HOST)
     if not host:
         return # InfluxDB není nastaven
@@ -136,6 +137,7 @@ async def handle_data(hass, payload, config):
 
 async def handle_status(hass, payload_str, config):
     """Zpracování statusu a odeslání pouze ZMĚN vybraných hodnot do InfluxDB."""
+    _LOGGER.info(f"Zpracování statusu a odeslání pouze ZMĚN vybraných hodnot do InfluxDB.")
     host = config.get(CONF_INFLUXDB_HOST)
     if not host:
         return
