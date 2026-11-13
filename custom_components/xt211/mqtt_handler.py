@@ -174,7 +174,7 @@ async def handle_status(hass, payload_str, config):
     # Zpracování obecného statusu
     if "Status" in data:
         # Váš whitelist
-        allowed_numeric_keys = ["lastwaitmin"] 
+        allowed_numeric_keys = ["lastwaitmin","wakeups"] 
         timestamp_ns = _parse_and_convert_time(data["datetime"]);
         #_LOGGER.debug("Timestamp: %s", data["datetime"])
         #_LOGGER.debug("Datetimens: %d ns", datetime_ns)
