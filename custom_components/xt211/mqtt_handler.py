@@ -164,7 +164,6 @@ async def handle_status(hass, payload_str, config):
         for k, v in data[actual_battery_key].items():
             if isinstance(v, (int, float)):
                 field_key = f"battery_{k.lower()}"
-            
                 # 👇 Zkontrolujeme, zda se hodnota změnila
                 if _LAST_STATUS_VALUES.get(field_key) != float(v):
                     fields.append(f"{field_key}={float(v)}")
